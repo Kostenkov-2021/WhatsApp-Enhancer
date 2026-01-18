@@ -64,6 +64,10 @@ class AppModule(appModuleHandler.AppModule):
 		except KeyError:
 			ui.message(_("Error accessing configuration"))
 
+	def event_NVDAObject_init(self, obj):
+		if obj.role == controlTypes.Role.SECTION:
+			obj.role = controlTypes.Role.PANE
+
 	def event_gainFocus(self, obj, nextHandler):
 		if obj.treeInterceptor:
 			obj.treeInterceptor.passThrough = True
