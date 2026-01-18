@@ -31,13 +31,13 @@ It can span multiple lines."""),
 	# Author(s)
 	addon_author="mrido1",
 	# URL for the add-on documentation support
-	addon_url=None,
+	addon_url="https://github.com/starkrush123/WhatsApp-Enhancer",
 	# URL for the add-on repository where the source code can be found
 	addon_sourceURL="https://github.com/starkrush123/WhatsApp-Enhancer",
 	# Documentation file name
 	addon_docFileName="readme.html",
 	# Minimum NVDA version supported (e.g. "2019.3.0", minor version is optional)
-	addon_minimumNVDAVersion="2023.1",
+	addon_minimumNVDAVersion="2024.1",
 	# Last NVDA version supported/tested (e.g. "2024.4.0", ideally more recent than minimum version)
 	addon_lastTestedNVDAVersion="2025.3.2",
 	# Add-on update channel (default is None, denoting stable releases,
