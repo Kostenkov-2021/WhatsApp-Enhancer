@@ -111,8 +111,8 @@ class AppModule(appModuleHandler.AppModule):
 	def _on_speak(self, sequence, *args, **kwargs):
 		new_sequence = []
 		
-		# Phone number regex: + followed by digits, spaces, or dashes
-		phone_pattern = r'\+\d[\d\s-]{6,}\d'
+		# Phone number regex: + followed by digits, spaces, dashes, or parentheses
+		phone_pattern = r'\+\d[\d\s\-\(\)]{6,}\d'
 
 		def filter_phone(match):
 			full_text = match.string
