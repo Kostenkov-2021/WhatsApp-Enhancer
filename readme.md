@@ -128,9 +128,7 @@ This add-on automatically detects and **silences these usage hints**, allowing y
 *   **How it works:** The filter intelligently separates the chat content from the metadata (timestamp) and removes the long instruction text that follows, while preserving important status updates like *"has reaction"* or *"unread"*.
 *   **Configuration:** This feature is disabled by default. If you prefer to not  hearing these hints, you can unchecked "Read usage hints while navigating chat list" in the add-on settings panel.
 
-## Conclusion & Contributions
-
-For the time being, this add-on is strictly limited to the core functionalities described above (Browse Mode management, text window, and review cursor) to ensure maximum stability amidst frequent WhatsApp updates.
+## Contributions
 
 If you have suggestions, feature requests, or would like to report a bug, please feel free to contribute:
 
