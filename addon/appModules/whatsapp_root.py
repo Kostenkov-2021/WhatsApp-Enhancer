@@ -114,6 +114,10 @@ class AppModule(appModuleHandler.AppModule):
 		# Phone number regex: + followed by digits, spaces, dashes, or parentheses
 		phone_pattern = r'\+\d[\d\s\-\(\)]{6,}\d'
 
+		# Time pattern: HH:MM or HH.MM, optionally followed by AM/PM
+		# Matches: "7.32 AM", "14:30", "2:47 PM"
+		time_pattern = r'(\d{1,2}[:.]\d{2}(?:\s?[APap][Mm])?)'
+
 		def filter_phone(match):
 			full_text = match.string
 			start_index = match.start()
@@ -162,9 +166,37 @@ class AppModule(appModuleHandler.AppModule):
 		for item in sequence:
 			# Check config directly for instant update
 			is_filtering_enabled = config.conf["WhatsAppEnhancer"].get("filter_phone_numbers", True)
+			read_usage_hints = config.conf["WhatsAppEnhancer"].get("read_usage_hints", True)
 			
-			if is_filtering_enabled and isinstance(item, str):
-				item = re.sub(phone_pattern, filter_phone, item)
+			if isinstance(item, str):
+				if is_filtering_enabled:
+					item = re.sub(phone_pattern, filter_phone, item)
+				
+				# Smart Hint Filtering (Language Agnostic)
+				# Hints usually appear AFTER the timestamp and are long sentences starting with a Capital letter.
+				# Structure: [Content] [Time] [Status - optional] [Hint]
+				if not read_usage_hints:
+					# Find all timestamps
+					time_matches = list(re.finditer(time_pattern, item))
+					if time_matches:
+						# Use the LAST timestamp as the delimiter between Content and Metadata
+						last_time = time_matches[-1]
+						suffix_start = last_time.end()
+						prefix = item[:suffix_start]
+						suffix = item[suffix_start:]
+						
+						# Look for the Hint in the suffix
+						# Heuristic: A long phrase (>15 chars) starting with an Uppercase letter
+						# This preserves short statuses like "has reaction" (lowercase) or "unread"
+						# Regex: Find a Capital letter followed by at least 15 chars until the end
+						hint_match = re.search(r'([A-Z].{15,})$', suffix)
+						
+						if hint_match:
+							# Remove the hint part from the suffix
+							hint_text = hint_match.group(1)
+							suffix = suffix.replace(hint_text, "").rstrip()
+							item = prefix + suffix
+
 			new_sequence.append(item)
 
 		if self._original_speak:

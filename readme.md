@@ -119,6 +119,15 @@ This add-on includes a **smart filter** that automatically removes these numbers
 | :--- | :--- |
 | `Ctrl + Shift + E` | **Toggle Filter:** Instantly enables or disables the phone number filter. You can also configure this preference permanently in the add-on settings. |
 
+### 4. Smart Usage Hints Filtering
+
+When navigating the chat list, WhatsApp often appends repetitive instructions to every item, such as *"For more options, press left or right arrow key to access context menu"* or its translated equivalents. Hearing this on every single chat can be extremely tiresome and slows down navigation significantly.
+
+This add-on automatically detects and **silences these usage hints**, allowing you to hear only the relevant information (Chat Name, Message Preview, Time, and Status).
+
+*   **How it works:** The filter intelligently separates the chat content from the metadata (timestamp) and removes the long instruction text that follows, while preserving important status updates like *"has reaction"* or *"unread"*.
+*   **Configuration:** This feature is disabled by default. If you prefer to not  hearing these hints, you can unchecked "Read usage hints while navigating chat list" in the add-on settings panel.
+
 ## Conclusion & Contributions
 
 For the time being, this add-on is strictly limited to the core functionalities described above (Browse Mode management, text window, and review cursor) to ensure maximum stability amidst frequent WhatsApp updates.

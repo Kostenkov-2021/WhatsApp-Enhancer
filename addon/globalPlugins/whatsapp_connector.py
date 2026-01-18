@@ -12,6 +12,7 @@ addonHandler.initTranslation()
 SPEC = {
 	'automaticReadingOfNewMessages': 'boolean(default=False)',
 	'filter_phone_numbers': 'boolean(default=True)',
+	'read_usage_hints': 'boolean(default=True)',
 }
 
 class WhatsAppEnhancerSettings(SettingsPanel):
@@ -26,8 +27,15 @@ class WhatsAppEnhancerSettings(SettingsPanel):
 		)
 		self.filter_phone_numbers.SetValue(config.conf["WhatsAppEnhancer"]["filter_phone_numbers"])
 
+		# Usage Hints
+		self.read_usage_hints = settingsSizerHelper.addItem(
+			wx.CheckBox(self, label=_("Read usage hints while navigating chat list"))
+		)
+		self.read_usage_hints.SetValue(config.conf["WhatsAppEnhancer"]["read_usage_hints"])
+
 	def onSave(self):
 		config.conf["WhatsAppEnhancer"]["filter_phone_numbers"] = self.filter_phone_numbers.IsChecked()
+		config.conf["WhatsAppEnhancer"]["read_usage_hints"] = self.read_usage_hints.IsChecked()
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def __init__(self):
