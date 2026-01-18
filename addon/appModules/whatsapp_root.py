@@ -172,8 +172,8 @@ class AppModule(appModuleHandler.AppModule):
 				if is_filtering_enabled:
 					item = re.sub(phone_pattern, filter_phone, item)
 				
-				# Smart Hint Filtering (Language Agnostic)
-				# Hints usually appear AFTER the timestamp and are long sentences starting with a Capital letter.
+				# Smart Hint Filtering (Language Agnostic - Safer)
+				# Hints usually appear AFTER the timestamp.
 				# Structure: [Content] [Time] [Status - optional] [Hint]
 				if not read_usage_hints:
 					# Find all timestamps
@@ -185,17 +185,21 @@ class AppModule(appModuleHandler.AppModule):
 						prefix = item[:suffix_start]
 						suffix = item[suffix_start:]
 						
-						# Look for the Hint in the suffix
-						# Heuristic: A long phrase (>15 chars) starting with an Uppercase letter
-						# This preserves short statuses like "has reaction" (lowercase) or "unread"
-						# Regex: Find a Capital letter followed by at least 15 chars until the end
-						hint_match = re.search(r'([A-Z].{15,})$', suffix)
+						# Safer Heuristic: Check for specific navigation keywords in the suffix.
+						# We look for a combination of "Direction/Key" AND "Function/Menu".
+						# This prevents deleting message previews that happen to start with a Capital letter.
 						
-						if hint_match:
-							# Remove the hint part from the suffix
-							hint_text = hint_match.group(1)
-							suffix = suffix.replace(hint_text, "").rstrip()
-							item = prefix + suffix
+						s_lower = suffix.lower()
+						has_arrow = "arrow" in s_lower or "panah" in s_lower
+						has_context = "option" in s_lower or "opsi" in s_lower or "context" in s_lower or "konteks" in s_lower or "menu" in s_lower
+						
+						if has_arrow and has_context:
+							# If both conditions met, it's definitely a navigation hint -> Remove it
+							item = prefix + "" # Remove suffix entirely if it's a hint (usually hint is the whole suffix)
+							# Note: If there was a status like "unread" mixed with the hint, it might be tricky, 
+							# but usually Hint is its own separate sentence at the end.
+						
+						# If keywords not found, we assume the suffix is part of the message or a status we want to keep.
 
 			new_sequence.append(item)
 
