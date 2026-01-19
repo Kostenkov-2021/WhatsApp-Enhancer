@@ -27,7 +27,8 @@ addon_info = AddonInfo(
 	# Brief changelog for this version
 	# Translators: what's new content for the add-on version to be shown in the add-on store
 	addon_changelog=_("""Fix AttributeError in Browse Mode toggle script
-                   add line review commands"""),
+                   add line review commands
+                   changed how the phone number filter works"""),
 	# Author(s)
 	addon_author="mrido1",
 	# URL for the add-on documentation support
