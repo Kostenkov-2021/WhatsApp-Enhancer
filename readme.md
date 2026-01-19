@@ -108,11 +108,11 @@ To overcome this limitation, this add-on includes a custom review feature that c
 | `NVDA + Left/Right Arrow` | Review the last spoken text **character by character**. |
 | `NVDA + Ctrl + Left/Right Arrow` | Review the last spoken text **word by word**. |
 
-### 3. Smart Phone Number Filtering
+### 3. Phone Number Filtering
 
-WhatsApp chat headers often contain a long list of unsaved phone numbers (e.g., in group chats), which can be verbose and distracting when read aloud.
+WhatsApp message list often contain a long list of unsaved phone numbers (e.g., in group chats), which can be verbose and distracting.
 
-This add-on includes a **smart filter** that automatically removes these numbers from speech while preserving important context (like contact names or notification details). The filter is intelligent enough to distinguish between a list of contacts (where numbers should be read) and a chat header (where they are redundant).
+This add-on includes a **filter** that automatically removes these numbers directly from the object's name. This means the numbers are filtered out from both **Speech and Braille**, providing a cleaner experience.
 
 | Shortcut | Action |
 | :--- | :--- |

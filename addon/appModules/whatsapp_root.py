@@ -40,8 +40,6 @@ class AppModule(appModuleHandler.AppModule):
 		self._review_cursor = 0
 		self._review_line_index = 0
 		self._is_reviewing = False
-		self._original_speak = None
-		self._patch_speech()
 
 		try:
 			conf = config.conf["WhatsAppEnhancer"]
@@ -69,6 +67,39 @@ class AppModule(appModuleHandler.AppModule):
 	def event_NVDAObject_init(self, obj):
 		if obj.role == controlTypes.Role.SECTION:
 			obj.role = controlTypes.Role.PANE
+		
+		# Filtering logic adapted from contohaddon
+		try:
+			# Check config
+			try:
+				if not config.conf["WhatsAppEnhancer"].get("filter_phone_numbers", True):
+					return
+			except:
+				return
+
+			# Target Identification:
+			# 1. Try to match 'contohaddon' logic (IA2Attributes) for legacy/compatibility
+			# 2. Fallback to Role.LISTITEM for WebView2/UIA where IA2 might be missing
+			is_target = False
+			
+			try:
+				# Use getattr to avoid crashes on UIA objects that strictly don't have this property
+				ia2_attrs = getattr(obj, "IA2Attributes", None)
+				if ia2_attrs and "focusable-list-item" in ia2_attrs.get("class", ""):
+					is_target = True
+			except:
+				pass
+			
+			if not is_target and obj.role == controlTypes.Role.LISTITEM:
+				is_target = True
+
+			if is_target and obj.name:
+				# Regex from contohaddon: r'\+\d[()\d\s‬-]{12,}'
+				# \u202c is the invisible POP DIRECTIONAL FORMATTING character present in the original regex
+				# We use unicode escape to ensure it's handled correctly across editors/encodings
+				obj.name = re.sub(r'\+\d[()\d\s\u202c-]{12,}', '', obj.name)
+		except:
+			pass
 
 	def event_gainFocus(self, obj, nextHandler):
 		if obj.treeInterceptor:
@@ -92,143 +123,7 @@ class AppModule(appModuleHandler.AppModule):
 		nextHandler()
 
 	def terminate(self):
-		self._unpatch_speech()
 		super().terminate()
-
-	def _patch_speech(self):
-		try:
-			self._original_speak = speech.speech.speak
-			speech.speech.speak = self._on_speak
-		except AttributeError:
-			self._original_speak = speech.speak
-			speech.speak = self._on_speak
-
-	def _unpatch_speech(self):
-		if self._original_speak:
-			try:
-				speech.speech.speak = self._original_speak
-			except AttributeError:
-				speech.speak = self._original_speak
-
-	def _on_speak(self, sequence, *args, **kwargs):
-		new_sequence = []
-		
-		# Phone number regex: + followed by digits, spaces, dashes, or parentheses
-		phone_pattern = r'\+\d[\d\s\-\(\)]{6,}\d'
-
-		# Time pattern: HH:MM or HH.MM, optionally followed by AM/PM
-		# Matches: "7.32 AM", "14:30", "2:47 PM"
-		time_pattern = r'(\d{1,2}[:.]\d{2}(?:\s?[APap][Mm])?)'
-
-		def filter_phone(match):
-			full_text = match.string
-			start_index = match.start()
-			end_index = match.end()
-			
-			prefix = full_text[:start_index].strip()
-			
-			# Keep if start of string (just a number)
-			if not prefix:
-				return match.group(0)
-
-			# Keep if comma-separated list (likely multiple contacts/numbers)
-			if prefix.endswith(','):
-				return match.group(0)
-
-			# Keep if it looks like a label (e.g. "Number: +62...")
-			if prefix.endswith(':'):
-				return match.group(0)
-
-			# Smart Filter: Always remove if it contains "Mungkin" (Maybe) -> Unsaved contact header
-			if "mungkin" in prefix.lower():
-				return ""
-
-			suffix = full_text[end_index:].strip()
-			if not suffix:
-				return "" # Remove trailing numbers in headers
-
-			# Smart Filter: Remove if followed by URL
-			if suffix.lower().startswith("http"):
-				return ""
-
-			# Existing: Remove if followed by Digit (Time) or Uppercase (Header like "Message")
-			if suffix[0].isdigit() or suffix[0].isupper():
-				return ""
-			
-			# Smart Filter: Remove if the prefix looks like a Name (ends with Title Case/Upper word)
-			words = prefix.split()
-			if words and words[-1][0].isupper():
-				return ""
-			
-			# Keep otherwise (likely notification sentence or meaningful text)
-			return match.group(0)
-
-		for item in sequence:
-			# Check config directly for instant update
-			is_filtering_enabled = config.conf["WhatsAppEnhancer"].get("filter_phone_numbers", True)
-			read_usage_hints = config.conf["WhatsAppEnhancer"].get("read_usage_hints", True)
-			
-			if isinstance(item, str):
-				if is_filtering_enabled:
-					item = re.sub(phone_pattern, filter_phone, item)
-				
-				# Smart Hint Filtering (Language Agnostic - Safer)
-				# Hints usually appear AFTER the timestamp.
-				# Structure: [Content] [Time] [Status - optional] [Hint]
-				if not read_usage_hints:
-					# Find all timestamps
-					time_matches = list(re.finditer(time_pattern, item))
-					if time_matches:
-						# Use the LAST timestamp as the delimiter between Content and Metadata
-						last_time = time_matches[-1]
-						suffix_start = last_time.end()
-						prefix = item[:suffix_start]
-						suffix = item[suffix_start:]
-						
-						# Safer Heuristic: Check for specific navigation keywords in the suffix.
-						# We look for a combination of "Direction/Key" AND "Function/Menu".
-						# This prevents deleting message previews that happen to start with a Capital letter.
-						
-						s_lower = suffix.lower()
-						has_arrow = "arrow" in s_lower or "panah" in s_lower
-						has_context = "option" in s_lower or "opsi" in s_lower or "context" in s_lower or "konteks" in s_lower or "menu" in s_lower
-						
-						if has_arrow and has_context:
-							# If both conditions met, it's definitely a navigation hint -> Remove it
-							item = prefix + "" # Remove suffix entirely if it's a hint (usually hint is the whole suffix)
-							# Note: If there was a status like "unread" mixed with the hint, it might be tricky, 
-							# but usually Hint is its own separate sentence at the end.
-						
-						# If keywords not found, we assume the suffix is part of the message or a status we want to keep.
-
-			new_sequence.append(item)
-
-		if self._original_speak:
-			self._original_speak(new_sequence, *args, **kwargs)
-		
-		if self._is_reviewing:
-			return
-
-		text_list = [item for item in new_sequence if isinstance(item, str)]
-		full_text = " ".join(text_list)
-		
-		if full_text.strip():
-			self._last_spoken_text = full_text
-			self._review_cursor = 0
-
-		text_list = []
-		for item in new_sequence:
-			if isinstance(item, str):
-				text_list.append(item)
-		
-		full_text = " ".join(text_list)
-		if full_text.strip():
-			self._last_spoken_text = full_text
-			self._review_cursor = 0
-			# Split into lines of approx 100 chars for line navigation
-			import textwrap
-			self._last_spoken_lines = textwrap.wrap(full_text, 100) if full_text else []
-			self._review_line_index = 0
 
 	@script(
 		description=_("Review previous character of last spoken text"),
