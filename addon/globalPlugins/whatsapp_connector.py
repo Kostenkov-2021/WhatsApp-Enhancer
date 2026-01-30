@@ -13,6 +13,7 @@ SPEC = {
 	'automaticReadingOfNewMessages': 'boolean(default=False)',
 	'filter_phone_numbers': 'boolean(default=True)',
 	'read_usage_hints': 'boolean(default=True)',
+	'disable_browse_mode_lock': 'boolean(default=False)',
 }
 
 class WhatsAppEnhancerSettings(SettingsPanel):
@@ -33,9 +34,16 @@ class WhatsAppEnhancerSettings(SettingsPanel):
 		)
 		self.read_usage_hints.SetValue(config.conf["WhatsAppEnhancer"]["read_usage_hints"])
 
+		self.disable_browse_mode_lock = settingsSizerHelper.addItem(
+			wx.CheckBox(self, label=_("Disable browse mode lock (not recommended)"))
+		)
+		self.disable_browse_mode_lock.SetValue(config.conf["WhatsAppEnhancer"]["disable_browse_mode_lock"])
+
 	def onSave(self):
 		config.conf["WhatsAppEnhancer"]["filter_phone_numbers"] = self.filter_phone_numbers.IsChecked()
 		config.conf["WhatsAppEnhancer"]["read_usage_hints"] = self.read_usage_hints.IsChecked()
+		config.conf["WhatsAppEnhancer"]["disable_browse_mode_lock"] = self.disable_browse_mode_lock.IsChecked()
+		config.conf.save()
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def __init__(self):

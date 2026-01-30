@@ -11,6 +11,9 @@ import speech
 import speechViewer
 import tones
 import globalCommands
+import addonHandler
+
+addonHandler.initTranslation()
 
 sys.path.insert(0, ".")
 from .text_window import TextWindow
@@ -104,8 +107,14 @@ class AppModule(appModuleHandler.AppModule):
 			pass
 
 	def event_gainFocus(self, obj, nextHandler):
-		if obj.treeInterceptor:
-			obj.treeInterceptor.passThrough = True
+		lock_disabled = False
+		try:
+			lock_disabled = config.conf["WhatsAppEnhancer"]["disable_browse_mode_lock"]
+		except:
+			pass
+		if not lock_disabled:
+			if obj.treeInterceptor:
+				obj.treeInterceptor.passThrough = True
 		
 		if not self.mainWindow or not self.mainWindow.windowHandle:
 			curr = obj
@@ -524,17 +533,31 @@ class AppModule(appModuleHandler.AppModule):
 
 	@script(
 		description=_("Prevents accidental toggling of Browse Mode in WhatsApp"),
-		gesture="kb:NVDA+space"
+		gestures=["kb:NVDA+space", "kb(laptop):NVDA+space", "kb(desktop):NVDA+space"]
 	)
 	def script_disableBrowseModeToggle(self, gesture):
-		# WhatsApp Desktop (WebView2) works best in Focus Mode.
-		# Accidental enabling of Browse Mode breaks navigation.
-		# We intercept NVDA+Space and force Focus Mode if not already active.
+		lock_disabled = False
+		try:
+			lock_disabled = config.conf["WhatsAppEnhancer"]["disable_browse_mode_lock"]
+		except:
+			pass
+		if lock_disabled:
+			import globalCommands
+			script = getattr(globalCommands.commands, "script_toggleVirtualBufferPassThrough", None)
+			if script:
+				script(gesture)
+			else:
+				obj = api.getFocusObject()
+				vbuf = getattr(obj, "treeInterceptor", None)
+				if vbuf:
+					vbuf.passThrough = not vbuf.passThrough
+			return
 		focus_obj = api.getFocusObject()
 		if not focus_obj.treeInterceptor or not focus_obj.treeInterceptor.passThrough:
 			if focus_obj.treeInterceptor:
 				focus_obj.treeInterceptor.passThrough = True
 			ui.message(_("Browse Mode is disabled for WhatsApp to ensure best experience."))
 		else:
-			# If already in correct mode, just report it to reassure user
 			ui.message(_("Browse Mode disabled"))
+
+	
