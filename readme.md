@@ -2,26 +2,23 @@
 
 **Author:** mrido1
 
-This add-on is a specialized accessibility bridge for the **modern WhatsApp Desktop application** (available from the Microsoft Store). It enhances navigation efficiency and fixes interaction issues caused by the application's underlying technology.
+WhatsApp Desktop Enhancer is a specialized accessibility bridge designed for the **modern WhatsApp Desktop application** (available via the Microsoft Store). This add-on streamlines navigation and resolves critical interaction issues introduced by recent changes in WhatsApp's underlying technology.
 
-<div class="info-box">
+> [!NOTE]
+> ### Why is this add-on necessary?
+>
+> The Windows version of WhatsApp has undergone several major architectural shifts, leading to significant accessibility challenges:
+>
+> *   **The Native Era (UWP):** Between **2021 and 2022**, WhatsApp released a native UWP version that offered exceptional performance and seamless screen reader support. It was widely considered the "gold standard" for accessibility.
+> *   **The WebView2 Era:** Starting in **late 2025**, WhatsApp transitioned to a web-hybrid engine (WebView2). While this allowed for easier cross-platform updates, it introduced severe regressions for screen reader users, including focus instability and disruptive "Browse Mode" conflicts.
+>
+> **The Problem:** Because the new app is web-based, NVDA often incorrectly activates "Browse Mode." This interferes with standard keyboard shortcuts (like `Ctrl+F`) and makes typing difficult. Furthermore, focus frequently becomes "stuck" within list items.
+>
+> **The Solution:** This add-on optimizes the experience by **automatically disabling and locking Browse Mode**, forcing NVDA to treat WhatsApp as a standard desktop application. While this lock is active by default to ensure stability, advanced users can opt to disable it in the settings (though this is generally not recommended).
 
-### Why is this add-on needed?
+## Built-in Native Shortcuts (Highly Recommended)
 
-WhatsApp has gone through several technological shifts on Windows, creating confusion regarding accessibility:
-
-*   **Native UWP Era (The Golden Age):** Starting as a Beta in **November 2021** and releasing globally in **August 2022**, this native version was the pinnacle of accessibility on Windows. It offered lightning-fast performance and perfect screen reader support.
-*   **WebView2 Era (The Regression):** The shift began with a Beta in **July 2025**, and was forced onto stable users between **November and December 2025**. This update replaced the native engine with a web-hybrid (WebView2), causing significant accessibility issues (like focus instability and Browse Mode conflicts) that this add-on aims to fix.
-
-**The Problem:** The current version often confuses screen readers. NVDA may try to treat it as a webpage (activating Browse Mode), which breaks standard keyboard shortcuts like `Ctrl+F` or typing. Focus can also get "stuck" in list items.
-
-**The Solution:** This add-on forces NVDA to treat WhatsApp like a standard desktop application by **automatically disabling Browse Mode**. It also adds custom tools to inspect messages that are otherwise hard to reach.
-
-</div>
-
-## Native Shortcuts (Highly Recommended)
-
-Because the modern WhatsApp app is designed to be navigated with a keyboard, you should prioritize these built-in shortcuts. They are faster and more reliable than any add-on script.
+Since the modern WhatsApp app is built for keyboard-centric navigation, we strongly recommend prioritizing these native shortcuts. They are inherently faster and more reliable than any third-party script.
 
 ### Chat Management
 
@@ -39,18 +36,18 @@ Because the modern WhatsApp app is designed to be navigated with a keyboard, you
 | `Ctrl + Shift + B` | Block Chat |
 | `Ctrl + Alt + Shift + L` | Label chat (Business) |
 
-### Message & Navigation
+### Navigation & Search
 
 | Shortcut | Action |
 | :--- | :--- |
-| `Ctrl + Alt + /` | Search |
-| `Ctrl + Shift + F` | Search in Chat |
+| `Ctrl + Alt + /` | Global Search |
+| `Ctrl + Shift + F` | Search within current chat |
 | `Alt + K` | Extended Search |
-| `Ctrl + Alt + P` | Profile and About |
+| `Ctrl + Alt + P` | Profile & About |
 | `Alt + I` | Open Chat Info |
 | `Alt + S` | Settings |
-| `Alt + L` | Lock App |
-| `Ctrl + 1..9` | Open Chat (by position) |
+| `Alt + L` | Lock Application |
+| `Ctrl + 1..9` | Jump to chat (by position) |
 
 ### Message Actions
 
@@ -60,7 +57,7 @@ Because the modern WhatsApp app is designed to be navigated with a keyboard, you
 | `Ctrl + Alt + R` | Reply Privately |
 | `Ctrl + Alt + D` | Forward |
 | `Alt + 8` | Star Message |
-| `Ctrl + Arrow Up` | Edit Last Message |
+| `Ctrl + Up Arrow` | Edit Last Message |
 | `Alt + A` | Open Attachment Panel |
 | `Ctrl + Alt + E` | Emoji Panel |
 | `Ctrl + Alt + G` | GIF Panel |
@@ -72,64 +69,50 @@ Because the modern WhatsApp app is designed to be navigated with a keyboard, you
 | :--- | :--- |
 | `Shift + .` | Increase Playback Speed |
 | `Shift + ,` | Decrease Playback Speed |
-| `Ctrl + Enter` | Send PTT |
-| `Alt + P` | Pause PTT Recording |
-| `Ctrl + Alt + Shift + R` | Star PTT Recording |
+| `Ctrl + Enter` | Send Voice Message |
+| `Alt + P` | Pause Recording |
+| `Ctrl + Alt + Shift + R` | Star Recording |
 
-### Zoom Control
+---
 
-| Shortcut | Action |
-| :--- | :--- |
-| `Ctrl + +` | Zoom In |
-| `Ctrl + -` | Zoom Out |
-| `Ctrl + 0` | Reset Zoom |
+## Enhanced Add-on Features
 
-## Add-on Features
+These tools supplement the native WhatsApp experience, addressing remaining accessibility gaps.
 
-These features supplement the native experience, filling gaps where accessibility is still lacking.
+### 1. Advanced Message Reading
+If a message is too long or focus becomes unreliable, use these tools for better control.
 
-### 1. Enhanced Message Reading
-
-Sometimes, focusing on a long message in the list is difficult, or NVDA reads it too quickly.
-
-| Shortcut | Action |
-| :--- | :--- |
-| `Alt + C` | **Text Window View:** Opens the currently focused message in a separate, dedicated text window. You can use standard arrow keys to read line-by-line or select text to copy. Press `Escape` to close. |
-| `Control + C` | **Quick Copy:** Copies the text of the focused message bubble directly to the clipboard. |
+*   **Text Window View (`Alt + C`):** Opens the focused message in a dedicated, read-only text window. This allows you to navigate line-by-line using standard arrow keys or select specific portions of text. Press `Escape` to close.
+*   **Quick Copy (`Ctrl + C`):** Directly copies the text of the focused message bubble to your clipboard.
 
 ### 2. Last Spoken Text Review
+By default, this add-on **locks Browse Mode to 'Off'** to prevent navigation conflicts. However, this means NVDA's standard review cursor (which relies on the virtual buffer) may not work for reviewing fleeting announcements.
 
-Since this add-on **disables Browse Mode by default** to ensure smooth navigation, NVDA's standard review cursor (which typically relies on the virtual buffer in web content) may not function as expected for reviewing fleeting announcements or toast notifications.
-
-To overcome this limitation, this add-on includes a custom review feature that captures the last thing NVDA spoke, allowing you to check details you might have missed.
+To solve this, we provide a custom review tool that captures the most recent speech output:
 
 | Shortcut | Action |
 | :--- | :--- |
-| `NVDA + Left/Right Arrow` | Review the last spoken text **character by character**. |
-| `NVDA + Ctrl + Left/Right Arrow` | Review the last spoken text **word by word**. |
+| `NVDA + Left/Right Arrow` | Review last spoken text **character by character**. |
+| `NVDA + Ctrl + Left/Right Arrow` | Review last spoken text **word by word**. |
 
 ### 3. Phone Number Filtering
+Group chats often become cluttered with unsaved phone numbers, making chat headers verbose and difficult to follow.
 
-WhatsApp message list often contain a long list of unsaved phone numbers (e.g., in group chats), which can be verbose and distracting.
+This add-on features an intelligent **filter** that strips phone numbers from object names in both **Speech and Braille**, resulting in a much cleaner interface.
 
-This add-on includes a **filter** that automatically removes these numbers directly from the object's name. This means the numbers are filtered out from both **Speech and Braille**, providing a cleaner experience.
+*   **Toggle Filter (`Ctrl + Shift + E`):** Instantly enable or disable the filter. You can also set your permanent preference in the add-on settings.
 
-| Shortcut | Action |
-| :--- | :--- |
-| `Ctrl + Shift + E` | **Toggle Filter:** Instantly enables or disables the phone number filter. You can also configure this preference permanently in the add-on settings. |
+### 4. Smart "Usage Hint" Silencing
+WhatsApp often appends repetitive instructions to every chat item (e.g., *"For more options, press left or right arrow..."*). Hearing this on every single chat is tedious and slows down your workflow.
 
-### 4. Smart Usage Hints Filtering
+Our filter automatically identifies and **silences these hints**, leaving only the essential information: Chat Name, Message Preview, Time, and Status.
 
-When navigating the chat list, WhatsApp often appends repetitive instructions to every item, such as *"For more options, press left or right arrow key to access context menu"* or its translated equivalents. Hearing this on every single chat can be extremely tiresome and slows down navigation significantly.
+*   **How it works:** The filter cleanly separates the actual content from the metadata, removing the instruction text while preserving important status updates like *"unread"* or *"has reaction"*.
+*   **Configuration:** This feature can be toggled via the "Read usage hints while navigating chat list" option in the settings panel.
 
-This add-on automatically detects and **silences these usage hints**, allowing you to hear only the relevant information (Chat Name, Message Preview, Time, and Status).
+## Feedback & Contributions
 
-*   **How it works:** The filter intelligently separates the chat content from the metadata (timestamp) and removes the long instruction text that follows, while preserving important status updates like *"has reaction"* or *"unread"*.
-*   **Configuration:** This feature is disabled by default. If you prefer to not  hearing these hints, you can unchecked "Read usage hints while navigating chat list" in the add-on settings panel.
-
-## Contributions
-
-If you have suggestions, feature requests, or would like to report a bug, please feel free to contribute:
+We welcome suggestions, bug reports, and code contributions.
 
 *   **Email:** [bredgreene5@gmail.com](mailto:bredgreene5@gmail.com)
-*   **GitHub:** You can open an issue or submit a Pull Request on the project repository.
+*   **GitHub:** Open an issue or submit a Pull Request on the project repository.
