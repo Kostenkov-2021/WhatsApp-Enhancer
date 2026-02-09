@@ -2,106 +2,110 @@
 import ui
 import api
 import controlTypes
-from .wh_utils import collect_elements, find_button_by_name, find_by_name
+from .wh_utils import find_elements_by_role, find_button_by_name, find_by_automation_id
 import re
 
-# Button search patterns (supports English and Indonesian)
-PATTERN_CHATS = r"^(Chats|Chat|Daftar chat)$"
-PATTERN_VOICE_CALL = r"(Voice call|Panggilan suara)"
-PATTERN_VIDEO_CALL = r"(Video call|Panggilan video)"
+def set_focus_and_navigator(obj):
+	if not obj: return False
+	try:
+		obj.setFocus()
+		api.setNavigatorObject(obj)
+		return True
+	except:
+		return False
+
+def get_ia2_class(obj):
+	try: return getattr(obj, "IA2Attributes", {}).get("class", "")
+	except: return ""
 
 def focus_chats(app_instance):
-	"""
-	Focuses on the chat list.
-	Strategy 1: Search for specific 'Chats' button.
-	Strategy 2: Fallback to the leftmost list object.
-	"""
-	root = app_instance.mainWindow
-	if not root:
-		ui.message("Main window not found")
-		return
-
-	# Strategy 1: Search for specific button
-	buttons = find_button_by_name(root, PATTERN_CHATS)
-	if buttons:
-		buttons[0].setFocus()
-		return
-
-	# Strategy 2: Fallback to leftmost LIST object
-	def is_list_candidate(o):
-		return o.role == controlTypes.Role.LIST or o.role == 86 # 86 = List role in some UIA versions
-
-	candidates = collect_elements(root, is_list_candidate)
-	valid_candidates = [c for c in candidates if c.location and c.location.width > 0]
-
-	if valid_candidates:
-		# Sort by left position (smallest = leftmost)
-		target = sorted(valid_candidates, key=lambda c: c.location.left)[0]
-		target.setFocus()
-		if target.firstChild:
-			target.firstChild.setFocus()
-	else:
-		ui.message("Chat list not found")
+	if getattr(app_instance, "_chats_cache", None):
+		try:
+			target = app_instance._chats_cache
+			if target.role == controlTypes.Role.LIST and target.firstChild:
+				target = target.firstChild
+			if set_focus_and_navigator(target): return
+		except:
+			app_instance._chats_cache = None
+	root = app_instance.mainWindow or api.getForegroundObject()
+	if not root: return
+	for aid in ("ChatList", "Navigation", "ChatSearch", "Search"):
+		found = find_by_automation_id(root, aid)
+		if found:
+			app_instance._chats_cache = found[0]
+			target = found[0].firstChild if found[0].role == controlTypes.Role.LIST and found[0].firstChild else found[0]
+			if set_focus_and_navigator(target): return
+	lists = find_elements_by_role(root, controlTypes.Role.LIST)
+	v = [l for l in lists if l.location and l.location.left < 450 and l.location.width < 500]
+	if v:
+		target = sorted(v, key=lambda x: x.location.left)[0]
+		app_instance._chats_cache = target
+		item = target.firstChild or target
+		set_focus_and_navigator(item)
 
 def focus_messages(app_instance):
-	"""
-	Focuses on the message list by searching for the widest Document or Grouping area.
-	"""
-	root = app_instance.mainWindow
+	if getattr(app_instance, "_message_list_cache", None):
+		try:
+			target = app_instance._message_list_cache
+			if target.role == controlTypes.Role.LIST and target.lastChild:
+				target = target.lastChild
+			if set_focus_and_navigator(target): return
+		except:
+			app_instance._message_list_cache = None
+	if getattr(app_instance, "_composer_cache", None):
+		try:
+			c = app_instance._composer_cache
+			target = c.parent.parent.parent.parent.parent.previous.lastChild.lastChild
+			if target:
+				app_instance._message_list_cache = target
+				if set_focus_and_navigator(target.lastChild or target): return
+		except:
+			pass
+	root = app_instance.mainWindow or api.getForegroundObject()
 	if not root: return
-
-	def is_area_candidate(o):
-		return o.role == controlTypes.Role.DOCUMENT or o.role == controlTypes.Role.GROUPING
-
-	candidates = collect_elements(root, is_area_candidate)
-	# Filter for areas wider than 300px
-	valid_candidates = [c for c in candidates if c.location and c.location.width > 300]
-
-	if valid_candidates:
-		# Select the widest one
-		target = sorted(valid_candidates, key=lambda c: c.location.width, reverse=True)[0]
-		target.setFocus()
-	else:
-		ui.message("Message list not found")
+	for aid in ("MessagesList", "Conversation", "MessageList"):
+		found = find_by_automation_id(root, aid)
+		if found:
+			app_instance._message_list_cache = found[0]
+			target = found[0].lastChild if found[0].role == controlTypes.Role.LIST and found[0].lastChild else found[0]
+			set_focus_and_navigator(target)
+			return
+	lists = find_elements_by_role(root, controlTypes.Role.LIST)
+	for l in lists:
+		if "focusable-list-item" in get_ia2_class(l.firstChild or l):
+			app_instance._message_list_cache = l
+			set_focus_and_navigator(l.lastChild or l)
+			return
 
 def focus_composer(app_instance):
-	"""
-	Focuses on the message composer by searching for the bottommost EditableText.
-	"""
-	root = app_instance.mainWindow
+	if getattr(app_instance, "_composer_cache", None):
+		if set_focus_and_navigator(app_instance._composer_cache): return
+	root = app_instance.mainWindow or api.getForegroundObject()
 	if not root: return
-
-	def is_edit_candidate(o):
-		return o.role == controlTypes.Role.EDITABLETEXT
-
-	candidates = collect_elements(root, is_edit_candidate)
-	valid_candidates = [c for c in candidates if c.location and c.location.height > 0]
-
-	if valid_candidates:
-		# Select the bottommost one (largest top coordinate)
-		target = sorted(valid_candidates, key=lambda c: c.location.top, reverse=True)[0]
-		target.setFocus()
-	else:
-		ui.message("Composer not found")
+	for aid in ("Composer", "ChatTextInput", "MsgInput", "TextBox"):
+		found = find_by_automation_id(root, aid)
+		if found:
+			app_instance._composer_cache = found[0]
+			set_focus_and_navigator(found[0])
+			return
+	edits = find_elements_by_role(root, controlTypes.Role.EDITABLETEXT)
+	for e in edits:
+		if "fd365im1" in get_ia2_class(e):
+			app_instance._composer_cache = e
+			set_focus_and_navigator(e)
+			return
+	v = [e for e in edits if e.location and e.location.height > 0]
+	if v:
+		target = sorted(v, key=lambda x: x.location.top, reverse=True)[0]
+		app_instance._composer_cache = target
+		set_focus_and_navigator(target)
 
 def perform_voice_call(app_instance):
-	"""Clicks the Voice Call button."""
 	root = app_instance.mainWindow or api.getForegroundObject()
-	
-	buttons = find_button_by_name(root, PATTERN_VOICE_CALL)
-	if buttons:
-		buttons[0].doAction()
-		ui.message("Calling...")
-	else:
-		ui.message("Voice call button not found")
+	btns = find_button_by_name(root, r"(Voice call|Panggilan suara)")
+	if btns: btns[0].doAction()
 
 def perform_video_call(app_instance):
-	"""Clicks the Video Call button."""
 	root = app_instance.mainWindow or api.getForegroundObject()
-	
-	buttons = find_button_by_name(root, PATTERN_VIDEO_CALL)
-	if buttons:
-		buttons[0].doAction()
-		ui.message("Video calling...")
-	else:
-		ui.message("Video call button not found")
+	btns = find_button_by_name(root, r"(Video call|Panggilan video)")
+	if btns: btns[0].doAction()

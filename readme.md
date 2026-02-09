@@ -82,6 +82,8 @@ These tools supplement the native WhatsApp experience, addressing remaining acce
 ### 1. Advanced Message Reading
 If a message is too long or focus becomes unreliable, use these tools for better control.
 
+*   **Context Menu Access (`Shift + Enter`):** Opens the options menu for the focused message. This is designed to work seamlessly across many different languages.
+*   **Voice Message Playback (`Enter`):** Allows you to play or pause voice messages instantly by simply pressing Enter while the message is focused.
 *   **Text Window View (`Alt + C`):** Opens the focused message in a dedicated, read-only text window. This allows you to navigate line-by-line using standard arrow keys or select specific portions of text. Press `Escape` to close.
 *   **Quick Copy (`Ctrl + C`):** Directly copies the text of the focused message bubble to your clipboard.
 
@@ -107,7 +109,7 @@ WhatsApp often appends repetitive instructions to every chat item (e.g., *"For m
 
 Our filter automatically identifies and **silences these hints**, leaving only the essential information: Chat Name, Message Preview, Time, and Status.
 
-*   **How it works:** The filter cleanly separates the actual content from the metadata, removing the instruction text while preserving important status updates like *"unread"* or *"has reaction"*.
+*   **How it works:** The filter cleanly separates the actual content from the metadata, removing the instruction text while preserving important status updates like *"Read"*, *"Delivered"*, *"unread"*, or *"reactions"*.
 *   **Configuration:** This feature can be toggled via the "Read usage hints while navigating chat list" option in the settings panel.
 
 ## Feedback & Contributions

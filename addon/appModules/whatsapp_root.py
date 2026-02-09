@@ -1,3 +1,4 @@
+
 import appModuleHandler
 from scriptHandler import script
 import ui
@@ -12,6 +13,7 @@ import speechViewer
 import tones
 import globalCommands
 import addonHandler
+import winUser
 
 addonHandler.initTranslation()
 
@@ -19,13 +21,10 @@ sys.path.insert(0, ".")
 from .text_window import TextWindow
 from .wh_observers import TitleObserver, ChatObserver, ProgressObserver
 from .wh_navigation import (
-	focus_chats, 
-	focus_messages, 
-	focus_composer, 
 	perform_voice_call, 
 	perform_video_call
 )
-from .wh_utils import find_by_automation_id
+from .wh_utils import find_by_automation_id, find_button_by_name
 
 class AppModule(appModuleHandler.AppModule):
 	disableBrowseModeByDefault = True
@@ -33,11 +32,12 @@ class AppModule(appModuleHandler.AppModule):
 	scriptCategory = _("WhatsApp Enhancer")
 	
 	_message_list_cache = None
+	_composer_cache = None
+	_chats_cache = None
 	_title_element_cache = None
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		
 		self._last_spoken_text = ""
 		self._last_spoken_lines = []
 		self._review_cursor = 0
@@ -45,92 +45,47 @@ class AppModule(appModuleHandler.AppModule):
 		self._is_reviewing = False
 		self._original_speak = None
 		self._patch_speech()
-
 		try:
 			conf = config.conf["WhatsAppEnhancer"]
 			if conf.get("automaticReadingOfNewMessages") and not ChatObserver.active:
 				ChatObserver.restore(self)
-		except (KeyError, AttributeError):
-			# Config not ready yet
+		except:
 			pass
-
-	@script(
-		description=_("Toggle phone number filtering in speech"),
-		gesture="kb:control+shift+e"
-	)
-	def script_togglePhoneFilter(self, gesture):
-		# Toggle configuration directly
-		try:
-			current_val = config.conf["WhatsAppEnhancer"]["filter_phone_numbers"]
-			new_val = not current_val
-			config.conf["WhatsAppEnhancer"]["filter_phone_numbers"] = new_val
-			state = _("on") if new_val else _("off")
-			ui.message(_("Phone number filtering {state}").format(state=state))
-		except KeyError:
-			ui.message(_("Error accessing configuration"))
 
 	def event_NVDAObject_init(self, obj):
 		if obj.role == controlTypes.Role.SECTION:
 			obj.role = controlTypes.Role.PANE
-		
-		# Filtering logic adapted from contohaddon
 		try:
-			# Check config
-			try:
-				if not config.conf["WhatsAppEnhancer"].get("filter_phone_numbers", True):
-					return
-			except:
-				return
-
-			# Target Identification:
-			# 1. Try to match 'contohaddon' logic (IA2Attributes) for legacy/compatibility
-			# 2. Fallback to Role.LISTITEM for WebView2/UIA where IA2 might be missing
-			is_target = False
-			
-			try:
-				# Use getattr to avoid crashes on UIA objects that strictly don't have this property
-				ia2_attrs = getattr(obj, "IA2Attributes", None)
-				if ia2_attrs and "focusable-list-item" in ia2_attrs.get("class", ""):
-					is_target = True
-			except:
-				pass
-			
-			if not is_target and obj.role == controlTypes.Role.LISTITEM:
-				is_target = True
-
-			if is_target and obj.name:
-				# Regex from contohaddon: r'\+\d[()\d\s‬-]{12,}'
-				# \u202c is the invisible POP DIRECTIONAL FORMATTING character present in the original regex
-				# We use unicode escape to ensure it's handled correctly across editors/encodings
+			ia2 = getattr(obj, "IA2Attributes", None)
+			if ia2:
+				cls = ia2.get("class", "")
+				if "fd365im1" in cls:
+					self._composer_cache = obj
+					try: self._message_list_cache = obj.parent.parent.parent.parent.parent.previous.lastChild.lastChild
+					except: pass
+				elif "focusable-list-item" in cls:
+					if not self._message_list_cache: self._message_list_cache = obj.parent
+			if not self._chats_cache and obj.role == controlTypes.Role.LIST:
+				loc = obj.location
+				if loc and loc.left < 450 and loc.width < 500: self._chats_cache = obj
+			if obj.name and re.search(r'^(Chats|Chat|Daftar chat)$', obj.name, re.I):
+				try: self._chats_cache = obj.parent.parent.next.firstChild
+				except: pass
+			if obj.name and config.conf.get("WhatsAppEnhancer", {}).get("filter_phone_numbers", True):
 				obj.name = re.sub(r'\+\d[()\d\s\u202c-]{12,}', '', obj.name)
 		except:
 			pass
 
 	def event_gainFocus(self, obj, nextHandler):
-		lock_disabled = False
-		try:
-			lock_disabled = config.conf["WhatsAppEnhancer"]["disable_browse_mode_lock"]
-		except:
-			pass
-		if not lock_disabled:
-			if obj.treeInterceptor:
-				obj.treeInterceptor.passThrough = True
-		
 		if not self.mainWindow or not self.mainWindow.windowHandle:
 			curr = obj
-			while curr and curr.role != controlTypes.Role.WINDOW:
-				if not curr.parent: break
+			while curr:
+				if curr.role == controlTypes.Role.WINDOW:
+					self.mainWindow = curr
+					break
 				curr = curr.parent
-			if curr and curr.role == controlTypes.Role.WINDOW:
-				self.mainWindow = curr
-
-		try:
-			conf = config.conf["WhatsAppEnhancer"]
-			if conf.get("automaticReadingOfNewMessages") and ChatObserver.paused:
-				ChatObserver.restore(self)
-		except (KeyError, AttributeError):
-			pass
-
+		if not config.conf.get("WhatsAppEnhancer", {}).get("disable_browse_mode_lock", False):
+			if obj.treeInterceptor: obj.treeInterceptor.passThrough = True
 		nextHandler()
 
 	def terminate(self):
@@ -141,423 +96,186 @@ class AppModule(appModuleHandler.AppModule):
 		try:
 			self._original_speak = speech.speech.speak
 			speech.speech.speak = self._on_speak
-		except AttributeError:
+		except:
 			self._original_speak = speech.speak
 			speech.speak = self._on_speak
 
 	def _unpatch_speech(self):
 		if self._original_speak:
-			try:
-				speech.speech.speak = self._original_speak
-			except AttributeError:
-				speech.speak = self._original_speak
+			try: self.speech.speak = self._original_speak
+			except: speech.speak = self._original_speak
 
 	def _on_speak(self, sequence, *args, **kwargs):
 		new_sequence = []
-		
-		# Time pattern: HH:MM or HH.MM, optionally followed by AM/PM
-		time_pattern = r'(\d{1,2}[:.]\d{2}(?:\s?[APap][Mm])?)'
-
+		hp = r"(For more options|Untuk opsi|Para lebih|Para más|Pour plus|Per lebih|Per lebih banyak|Per lebih lanjut|Per più|Für weitere|Para mais|Daha fazla|Voor meer|Untuk mengakses|Untuk selengkapnya|Untuk bantuan|Untuk mendapatkan|Для получения|Để biết thêm|สำหรับตัวเลือก|その他のオプション|更多选项|अधिक विकल्पों|추가 옵션)"
 		for item in sequence:
-			read_usage_hints = config.conf["WhatsAppEnhancer"].get("read_usage_hints", True)
-			
-			if isinstance(item, str):
-				# Smart Hint Filtering (Language Agnostic - Safer)
-				# Hints usually appear AFTER the timestamp.
-				# Structure: [Content] [Time] [Status - optional] [Hint]
-				if not read_usage_hints:
-					# Find all timestamps
-					time_matches = list(re.finditer(time_pattern, item))
-					if time_matches:
-						# Use the LAST timestamp as the delimiter between Content and Metadata
-						last_time = time_matches[-1]
-						suffix_start = last_time.end()
-						prefix = item[:suffix_start]
-						suffix = item[suffix_start:]
-						
-						# Safer Heuristic: Check for specific navigation keywords in the suffix.
-						# We look for a combination of "Direction/Key" AND "Function/Menu".
-						
-						s_lower = suffix.lower()
-						has_arrow = "arrow" in s_lower or "panah" in s_lower
-						has_context = "option" in s_lower or "opsi" in s_lower or "context" in s_lower or "konteks" in s_lower or "menu" in s_lower
-						
-						if has_arrow and has_context:
-							# If both conditions met, it's definitely a navigation hint -> Remove it
-							item = prefix + "" 
-			
+			if isinstance(item, str) and not config.conf.get("WhatsAppEnhancer", {}).get("read_usage_hints", True):
+				if re.search(r"(arrow|panah|flecha|flèche|freccia|ok|Ok|стрелк|menu|konteks|context|contexto|contextuel|contestuale|Kontext|Bağlam)", item, re.I) and re.search(hp, item, re.I):
+					item = re.sub(hp + r".*", "", item, flags=re.I).strip()
 			new_sequence.append(item)
+		if self._original_speak: self._original_speak(new_sequence, *args, **kwargs)
+		if not self._is_reviewing:
+			text_list = [item for item in new_sequence if isinstance(item, str)]
+			full_text = " ".join(text_list)
+			if full_text.strip():
+				self._last_spoken_text = full_text
+				self._last_spoken_lines = [line for line in text_list if line.strip()]
+				self._review_cursor = 0
+				self._review_line_index = 0
 
-		if self._original_speak:
-			self._original_speak(new_sequence, *args, **kwargs)
-		
-		if self._is_reviewing:
-			return
-
-		text_list = [item for item in new_sequence if isinstance(item, str)]
-		full_text = " ".join(text_list)
-		
-		if full_text.strip():
-			self._last_spoken_text = full_text
-			self._last_spoken_lines = [line for line in text_list if line.strip()]
-			self._review_cursor = 0
-			self._review_line_index = 0
-
-	@script(
-		description=_("Review previous character of last spoken text"),
-		gesture="kb:NVDA+leftArrow"
-	)
+	@script(description=_("Review previous character"), gesture="kb:NVDA+leftArrow")
 	def script_review_previous_character(self, gesture):
-		if not self._last_spoken_text:
-			return
-		
+		if not self._last_spoken_text: return
 		self._is_reviewing = True
 		try:
-			if self._review_cursor > 0:
-				self._review_cursor -= 1
-				char = self._last_spoken_text[self._review_cursor]
-				speech.speak([char])
-			else:
-				tones.beep(100, 50)
-				char = self._last_spoken_text[0]
-				speech.speak([char])
-		finally:
-			self._is_reviewing = False
+			if self._review_cursor > 0: self._review_cursor -= 1
+			speech.speak([self._last_spoken_text[self._review_cursor]])
+		finally: self._is_reviewing = False
 
-	@script(
-		description=_("Review next character of last spoken text"),
-		gesture="kb:NVDA+rightArrow"
-	)
+	@script(description=_("Review next character"), gesture="kb:NVDA+rightArrow")
 	def script_review_next_character(self, gesture):
-		if not self._last_spoken_text:
-			return
-
+		if not self._last_spoken_text: return
 		self._is_reviewing = True
 		try:
-			if self._review_cursor < len(self._last_spoken_text) - 1:
-				self._review_cursor += 1
-				char = self._last_spoken_text[self._review_cursor]
-				speech.speak([char])
-			else:
-				tones.beep(400, 50)
-				char = self._last_spoken_text[-1]
-				speech.speak([char])
-		finally:
-			self._is_reviewing = False
+			if self._review_cursor < len(self._last_spoken_text) - 1: self._review_cursor += 1
+			speech.speak([self._last_spoken_text[self._review_cursor]])
+		finally: self._is_reviewing = False
 
-	@script(
-		description=_("Review previous word of last spoken text"),
-		gesture="kb:NVDA+control+leftArrow"
-	)
+	@script(description=_("Review previous word"), gesture="kb:NVDA+control+leftArrow")
 	def script_review_previous_word(self, gesture):
-		if not self._last_spoken_text:
-			return
-
+		if not self._last_spoken_text: return
 		self._is_reviewing = True
 		try:
-			if self._review_cursor <= 0:
-				tones.beep(100, 50)
-				first_word_end = 0
-				while first_word_end < len(self._last_spoken_text) and not self._last_spoken_text[first_word_end].isspace():
-					first_word_end += 1
-				word = self._last_spoken_text[0:first_word_end]
-				if word:
-					speech.speak([word])
-				return
-
 			cur = self._review_cursor - 1
-			
-			while cur >= 0 and self._last_spoken_text[cur].isspace():
-				cur -= 1
-			
+			while cur >= 0 and self._last_spoken_text[cur].isspace(): cur -= 1
 			word_end = cur + 1
-			while cur >= 0 and not self._last_spoken_text[cur].isspace():
-				cur -= 1
-			word_start = cur + 1
+			while cur >= 0 and not self._last_spoken_text[cur].isspace(): cur -= 1
+			self._review_cursor = max(0, cur + 1)
+			speech.speak([self._last_spoken_text[self._review_cursor:word_end]])
+		finally: self._is_reviewing = False
 
-			word = self._last_spoken_text[word_start:word_end]
-			if word:
-				self._review_cursor = word_start
-				speech.speak([word])
-			else:
-				tones.beep(100, 50)
-		finally:
-			self._is_reviewing = False
-
-	@script(
-		description=_("Review next word of last spoken text"),
-		gesture="kb:NVDA+control+rightArrow"
-	)
+	@script(description=_("Review next word"), gesture="kb:NVDA+control+rightArrow")
 	def script_review_next_word(self, gesture):
-		if not self._last_spoken_text:
-			return
-
+		if not self._last_spoken_text: return
 		self._is_reviewing = True
 		try:
 			cur = self._review_cursor
-			length = len(self._last_spoken_text)
-
-			while cur < length and not self._last_spoken_text[cur].isspace():
-				cur += 1
-			
-			while cur < length and self._last_spoken_text[cur].isspace():
-				cur += 1
-			
-			if cur >= length:
-				tones.beep(400, 50)
-				last_word_start = length - 1
-				while last_word_start >= 0 and self._last_spoken_text[last_word_start].isspace():
-					last_word_start -= 1
-				word_start = last_word_start
-				while word_start >= 0 and not self._last_spoken_text[word_start].isspace():
-					word_start -= 1
-				last_word = self._last_spoken_text[word_start+1:last_word_start+1]
-				if last_word:
-					speech.speak([last_word])
-				return
-
-			word_start = cur
+			while cur < len(self._last_spoken_text) and not self._last_spoken_text[cur].isspace(): cur += 1
+			while cur < len(self._last_spoken_text) and self._last_spoken_text[cur].isspace(): cur += 1
+			self._review_cursor = cur
 			word_end = cur
-			while word_end < length and not self._last_spoken_text[word_end].isspace():
-				word_end += 1
-			
-			word = self._last_spoken_text[word_start:word_end]
-			if word:
-				self._review_cursor = word_start
-				speech.speak([word])
-			else:
-				tones.beep(400, 50)
-		finally:
-			self._is_reviewing = False
+			while word_end < len(self._last_spoken_text) and not self._last_spoken_text[word_end].isspace(): word_end += 1
+			speech.speak([self._last_spoken_text[self._review_cursor:word_end]])
+		finally: self._is_reviewing = False
 
-	@script(
-		description=_("Review previous line of last spoken text"),
-		gesture="kb:NVDA+upArrow"
-	)
+	@script(description=_("Review previous line"), gesture="kb:NVDA+upArrow")
 	def script_review_previous_line(self, gesture):
-		if not hasattr(self, '_last_spoken_lines') or not self._last_spoken_lines:
-			return
-
+		if not self._last_spoken_lines: return
 		self._is_reviewing = True
 		try:
-			if self._review_line_index > 0:
-				self._review_line_index -= 1
-				line = self._last_spoken_lines[self._review_line_index]
-				speech.speak([line])
-			else:
-				tones.beep(100, 50)
-				line = self._last_spoken_lines[0]
-				speech.speak([line])
-		finally:
-			self._is_reviewing = False
+			if self._review_line_index > 0: self._review_line_index -= 1
+			speech.speak([self._last_spoken_lines[self._review_line_index]])
+		finally: self._is_reviewing = False
 
-	@script(
-		description=_("Review next line of last spoken text"),
-		gesture="kb:NVDA+downArrow"
-	)
+	@script(description=_("Review next line"), gesture="kb:NVDA+downArrow")
 	def script_review_next_line(self, gesture):
-		if not hasattr(self, '_last_spoken_lines') or not self._last_spoken_lines:
-			return
-
+		if not self._last_spoken_lines: return
 		self._is_reviewing = True
 		try:
-			if self._review_line_index < len(self._last_spoken_lines) - 1:
-				self._review_line_index += 1
-				line = self._last_spoken_lines[self._review_line_index]
-				speech.speak([line])
-			else:
-				tones.beep(400, 50)
-				line = self._last_spoken_lines[-1]
-				speech.speak([line])
-		finally:
-			self._is_reviewing = False
+			if self._review_line_index < len(self._last_spoken_lines) - 1: self._review_line_index += 1
+			speech.speak([self._last_spoken_lines[self._review_line_index]])
+		finally: self._is_reviewing = False
 
-	def get_messages_element(self):
-		if self._message_list_cache and self._message_list_cache.location:
-			return self._message_list_cache
-		
-		found = find_by_automation_id(self.mainWindow, "MessagesList")
-		if found:
-			self._message_list_cache = found[0]
-			return found[0]
-		return None
-
-	def get_title_element(self):
-		if self._title_element_cache and self._title_element_cache.location:
-			return self._title_element_cache
-		
-		found = find_by_automation_id(self.mainWindow, "TitleButton")
-		if found:
-			self._title_element_cache = found[0]
-			return found[0]
-		return None
-
-	def is_own_message(self, message_obj):
-		return False
-
-	def focus_and_read_message(self, message_obj):
-		message_obj.setFocus()
-		ui.message(message_obj.name)
-
-	@script(
-		description=_("Focus the chat list"),
-		gesture="kb:alt+1"
-	)
-	def script_focusChats(self, gesture):
-		focus_chats(self)
-
-	@script(
-		description=_("Focus the message composer"),
-		gesture="kb:alt+d"
-	)
-	def script_focusComposer(self, gesture):
-		focus_composer(self)
-
-	@script(
-		description=_("Focus the message list"),
-		gesture="kb:alt+2"
-	)
-	def script_focusMessages(self, gesture):
-		focus_messages(self)
-
-	@script(
-		description=_("Report accessibility properties of focused object"),
-		gesture="kb:NVDA+shift+i"
-	)
+	@script(description=_("Inspector"), gesture="kb:NVDA+shift+i")
 	def script_inspector(self, gesture):
 		obj = api.getFocusObject()
-		role_str = str(obj.role)
 		loc = obj.location
 		loc_str = f"L:{loc.left}, T:{loc.top}, W:{loc.width}, H:{loc.height}" if loc else "No Loc"
-		msg = f"Role: {obj.role} ({obj.role.value}), {loc_str}, Name: '{obj.name}', ID: {obj.UIAAutomationId}"
-		ui.message(msg)
-		logHandler.log.info(f"WH_INSPECTOR: {msg}")
+		auto_id = getattr(obj, "UIAAutomationId", "None")
+		ui.message(f"Role: {obj.role}, {loc_str}, Name: '{obj.name}', ID: {auto_id}")
 
-	@script(
-		description=_("Read current chat title. Double press to toggle activity tracking."),
-		gesture="kb:alt+t"
-	)
+	@script(description=_("Read title"), gesture="kb:alt+t")
 	def script_read_profile_name(self, gesture):
-		if not self.get_title_element():
-			ui.message("Chat title not found")
-			return
-		
 		from scriptHandler import getLastScriptRepeatCount
 		if getLastScriptRepeatCount() == 1:
-			if TitleObserver.toggle(self):
-				ui.message("Chat activity tracking enabled")
-			else:
-				ui.message("Chat activity tracking disabled")
+			state = "enabled" if TitleObserver.toggle(self) else "disabled"
+			ui.message(f"Chat activity tracking {state}")
 			return
+		el = getattr(self, "get_title_element", lambda: None)()
+		if el: ui.message(", ".join([c.name for c in el.children if c.name]))
 
-		title_el = self.get_title_element()
-		parts = [child.name for child in title_el.children if child.name]
-		ui.message(", ".join(parts))
-
-	@script(
-		description=_("Toggle automatic reading of new messages"),
-		gesture="kb:alt+l"
-	)
+	@script(description=_("Toggle live chat"), gesture="kb:alt+l")
 	def script_toggle_live_chat(self, gesture):
-		if ChatObserver.toggle(self):
-			ui.message("Automatic new message reading enabled")
-		else:
-			ui.message("Automatic new message reading disabled")
+		state = "enabled" if ChatObserver.toggle(self) else "disabled"
+		ui.message(f"Automatic new message reading {state}")
 
-	@script(
-		description=_("Open current message in a dedicated text window"),
-		gesture="kb:alt+c"
-	)
+	@script(description=_("Dedicated text window"), gesture="kb:alt+c")
 	def script_show_text_message(self, gesture):
 		obj = api.getFocusObject()
-		text = obj.name
-		if not text:
-			gesture.send()
-			return
-		TextWindow(text.strip(), "Message Text", readOnly=False)
+		if obj.name: TextWindow(obj.name.strip(), "Message Text", readOnly=False)
+		else: gesture.send()
 
-	@script(
-		description=_("Copy current message to clipboard"),
-		gesture="kb:control+c"
-	)
+	@script(description=_("Copy message"), gesture="kb:control+c")
 	def script_copyMessage(self, gesture):
 		obj = api.getFocusObject()
 		if obj.role == controlTypes.Role.LISTITEM and obj.name:
 			api.copyToClip(obj.name.strip())
 			ui.message("Copied")
-		else:
+		else: gesture.send()
+
+	@script(description=_("Context menu"), gesture="kb:shift+enter")
+	def script_contextMenu(self, gesture):
+		f = api.getFocusObject()
+		if f.role == controlTypes.Role.EDITABLETEXT:
 			gesture.send()
+			return
+		p = r"(Context|konteks|contexto|contextuel|contestuale|Kontext|Bağlam|السياق|ngữ cảnh|บริบท|コンテキスト|上下文|संदर्भ|컨텍스트|Контекстное)"
+		res = find_button_by_name(f, p)
+		if not res and f.parent: res = find_button_by_name(f.parent, p)
+		if res: res[0].doAction()
 
-	@script(
-		description=_("Initiate voice call"),
-		gesture="kb:shift+alt+c"
-	)
-	def script_call(self, gesture):
-		perform_voice_call(self)
+	@script(description=_("Play voice message"), gesture="kb:enter")
+	def script_playVoiceMessage(self, gesture):
+		f = api.getFocusObject()
+		if f.role == controlTypes.Role.EDITABLETEXT:
+			gesture.send()
+			return
+		p = r"(Play|Putar|Reproducir|Lire|Riproduci|Reproduzir|abspielen|çal|afspelen|Odtwórz|تشغيل|Phát|เล่น|再生|播放|चलाएं|재생|Воспроизвести)"
+		res = find_button_by_name(f, p)
+		if res: res[0].doAction()
+		else: gesture.send()
 
-	@script(
-		description=_("Initiate video call"),
-		gesture="kb:shift+alt+v"
-	)
-	def script_videoCall(self, gesture):
-		perform_video_call(self)
+	@script(description=_("Voice call"), gesture="kb:shift+alt+c")
+	def script_call(self, gesture): perform_voice_call(self)
 
-	@script(
-		description=_("Moves to the next object in a flattened view of the object navigation hierarchy"),
-		gesture="kb:control+]"
-	)
+	@script(description=_("Video call"), gesture="kb:shift+alt+v")
+	def script_videoCall(self, gesture): perform_video_call(self)
+
+	@script(description=_("Next object"), gesture="kb:control+]")
 	def script_nextObject(self, gesture):
-		# Mencoba memanggil script flattened view, kalau nggak ada fallback ke navigasi objek biasa
-		script = getattr(globalCommands.commands, "script_nextObject", None)
-		if not script:
-			script = getattr(globalCommands.commands, "script_next", None)
-		
-		if script:
-			script(gesture)
-		else:
-			gesture.send()
+		s = getattr(globalCommands.commands, "script_nextObject", getattr(globalCommands.commands, "script_next", None))
+		if s: s(gesture)
+		else: gesture.send()
 
-	@script(
-		description=_("Moves to the previous object in a flattened view of the object navigation hierarchy"),
-		gesture="kb:control+["
-	)
+	@script(description=_("Previous object"), gesture="kb:control+[")
 	def script_previousObject(self, gesture):
-		script = getattr(globalCommands.commands, "script_previousObject", None)
-		if not script:
-			script = getattr(globalCommands.commands, "script_previous", None)
-		
-		if script:
-			script(gesture)
-		else:
-			gesture.send()
+		s = getattr(globalCommands.commands, "script_previousObject", getattr(globalCommands.commands, "script_previous", None))
+		if s: s(gesture)
+		else: gesture.send()
 
-	@script(
-		description=_("Prevents accidental toggling of Browse Mode in WhatsApp"),
-		gestures=["kb:NVDA+space", "kb(laptop):NVDA+space", "kb(desktop):NVDA+space"]
-	)
+	@script(description=_("Toggle browse mode"), gestures=["kb:NVDA+space"])
 	def script_disableBrowseModeToggle(self, gesture):
 		lock_disabled = False
-		try:
-			lock_disabled = config.conf["WhatsAppEnhancer"]["disable_browse_mode_lock"]
-		except:
-			pass
+		try: lock_disabled = bool(config.conf["WhatsAppEnhancer"].get("disable_browse_mode_lock", False))
+		except: pass
 		if lock_disabled:
 			import globalCommands
-			script = getattr(globalCommands.commands, "script_toggleVirtualBufferPassThrough", None)
-			if script:
-				script(gesture)
-			else:
-				obj = api.getFocusObject()
-				vbuf = getattr(obj, "treeInterceptor", None)
-				if vbuf:
-					vbuf.passThrough = not vbuf.passThrough
+			s = getattr(globalCommands.commands, "script_toggleVirtualBufferPassThrough", None)
+			if s: s(gesture)
 			return
-		focus_obj = api.getFocusObject()
-		if not focus_obj.treeInterceptor or not focus_obj.treeInterceptor.passThrough:
-			if focus_obj.treeInterceptor:
-				focus_obj.treeInterceptor.passThrough = True
-			ui.message(_("Browse Mode is disabled for WhatsApp to ensure best experience."))
-		else:
-			ui.message(_("Browse Mode disabled"))
-
-	
+		obj = api.getFocusObject()
+		ti = getattr(obj, "treeInterceptor", None)
+		if ti:
+			ti.passThrough = True
+			ui.message(_("Browse Mode is disabled for WhatsApp"))
+		else: gesture.send()
