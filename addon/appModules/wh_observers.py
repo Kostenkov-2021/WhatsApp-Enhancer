@@ -7,6 +7,9 @@ from nvwave import playWaveFile
 import os
 import controlTypes
 import api
+import addonHandler
+
+addonHandler.initTranslation()
 
 # Media path helper
 # Assumes folder structure: appModules/../media
@@ -183,7 +186,7 @@ class ProgressObserver:
 		try:
 			val = cls.progress_obj.value or cls.progress_obj.name
 			if not cls.last_val or cls.last_val != val:
-				ui.message(f"Progress: {val}")
+				ui.message(_("Progress: {val}").format(val=val))
 				cls.last_val = val
 			Timer(cls.interval, cls.tick).start()
 		except:

@@ -198,29 +198,37 @@ class AppModule(appModuleHandler.AppModule):
 	def script_inspector(self, gesture):
 		obj = api.getFocusObject()
 		loc = obj.location
-		loc_str = f"L:{loc.left}, T:{loc.top}, W:{loc.width}, H:{loc.height}" if loc else "No Loc"
+		if loc:
+			loc_str = _("L:{left}, T:{top}, W:{width}, H:{height}").format(
+				left=loc.left, top=loc.top, width=loc.width, height=loc.height
+			)
+		else:
+			loc_str = _("No Loc")
 		auto_id = getattr(obj, "UIAAutomationId", "None")
-		ui.message(f"Role: {obj.role}, {loc_str}, Name: '{obj.name}', ID: {auto_id}")
+		role_text = controlTypes.roleLabels.get(obj.role, obj.role)
+		ui.message(_("Role: {role}, {loc_str}, Name: '{name}', ID: {auto_id}").format(
+			role=role_text, loc_str=loc_str, name=obj.name, auto_id=auto_id
+		))
 
 	@script(description=_("Read title"), gesture="kb:alt+t")
 	def script_read_profile_name(self, gesture):
 		from scriptHandler import getLastScriptRepeatCount
 		if getLastScriptRepeatCount() == 1:
-			state = "enabled" if TitleObserver.toggle(self) else "disabled"
-			ui.message(f"Chat activity tracking {state}")
+			state = _("enabled") if TitleObserver.toggle(self) else _("disabled")
+			ui.message(_("Chat activity tracking {state}").format(state=state))
 			return
 		el = getattr(self, "get_title_element", lambda: None)()
 		if el: ui.message(", ".join([c.name for c in el.children if c.name]))
 
 	@script(description=_("Toggle live chat"), gesture="kb:alt+l")
 	def script_toggle_live_chat(self, gesture):
-		state = "enabled" if ChatObserver.toggle(self) else "disabled"
-		ui.message(f"Automatic new message reading {state}")
+		state = _("enabled") if ChatObserver.toggle(self) else _("disabled")
+		ui.message(_("Automatic new message reading {state}").format(state=state))
 
 	@script(description=_("Dedicated text window"), gesture="kb:alt+c")
 	def script_show_text_message(self, gesture):
 		obj = api.getFocusObject()
-		if obj.name: TextWindow(obj.name.strip(), "Message Text", readOnly=False)
+		if obj.name: TextWindow(obj.name.strip(), _("Message Text"), readOnly=False)
 		else: gesture.send()
 
 	@script(description=_("Copy message"), gesture="kb:control+c")
@@ -228,7 +236,7 @@ class AppModule(appModuleHandler.AppModule):
 		obj = api.getFocusObject()
 		if obj.role == controlTypes.Role.LISTITEM and obj.name:
 			api.copyToClip(obj.name.strip())
-			ui.message("Copied")
+			ui.message(_("Copied"))
 		else: gesture.send()
 
 	@script(description=_("Context menu"), gesture="kb:shift+enter")

@@ -1,0 +1,826 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WhatsApp Desktop Enhancer 1.0.7\n"
+"POT-Creation-Date: 2026-02-02 09:59+0300\n"
+"PO-Revision-Date: 2026-02-04 14:16+0300\n"
+"Last-Translator: \n"
+"Language-Team: Russian translation team <nvda.ru>, Danil Kostenkov "
+"<danilkostenkov38@gmail.com>\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.8\n"
+"X-Poedit-Basepath: ../../../..\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: addon/appModules\n"
+"X-Poedit-SearchPath-2: addon/globalPlugins\n"
+
+#: addon/appModules/whatsapp_root.py:33
+#: addon/globalPlugins/whatsapp_connector.py:20
+msgid "WhatsApp Enhancer"
+msgstr "Улучшения для WhatsApp"
+
+#: addon/appModules/whatsapp_root.py:58
+msgid "Toggle phone number filtering in speech"
+msgstr "Включить/выключить фильтрацию номеров телефонов при произнесении"
+
+#: addon/appModules/whatsapp_root.py:67
+msgid "on"
+msgstr "включено"
+
+#: addon/appModules/whatsapp_root.py:67
+msgid "off"
+msgstr "выключено"
+
+#: addon/appModules/whatsapp_root.py:68
+#, python-brace-format
+msgid "Phone number filtering {state}"
+msgstr "Фильтрация номеров телефонов: {state}"
+
+#: addon/appModules/whatsapp_root.py:70
+msgid "Error accessing configuration"
+msgstr "Ошибка доступа к конфигурации"
+
+#: addon/appModules/whatsapp_root.py:207
+msgid "Review previous character of last spoken text"
+msgstr "Просмотреть предыдущий символ последнего произнесённого текста"
+
+#: addon/appModules/whatsapp_root.py:228
+msgid "Review next character of last spoken text"
+msgstr "Просмотреть следующий символ последнего произнесённого текста"
+
+#: addon/appModules/whatsapp_root.py:249
+msgid "Review previous word of last spoken text"
+msgstr "Просмотреть предыдущее слово последнего произнесённого текста"
+
+#: addon/appModules/whatsapp_root.py:288
+msgid "Review next word of last spoken text"
+msgstr "Просмотреть следующее слово последнего произнесённого текста"
+
+#: addon/appModules/whatsapp_root.py:334
+msgid "Review previous line of last spoken text"
+msgstr "Просмотреть предыдущую строку последнего произнесённого текста"
+
+#: addon/appModules/whatsapp_root.py:355
+msgid "Review next line of last spoken text"
+msgstr "Просмотреть следующую строку последнего произнесённого текста"
+
+#: addon/appModules/whatsapp_root.py:403
+msgid "Focus the chat list"
+msgstr "Переместить фокус на список чатов"
+
+#: addon/appModules/whatsapp_root.py:410
+msgid "Focus the message composer"
+msgstr "Переместить фокус на поле ввода сообщения"
+
+#: addon/appModules/whatsapp_root.py:417
+msgid "Focus the message list"
+msgstr "Переместить фокус на список сообщений"
+
+#: addon/appModules/whatsapp_root.py:424
+msgid "Report accessibility properties of focused object"
+msgstr "Озвучить свойства доступности объекта в фокусе"
+
+#: addon/appModules/whatsapp_root.py:437
+msgid "Read current chat title. Double press to toggle activity tracking."
+msgstr ""
+"Озвучить название текущего чата. Двойное нажатие переключает отслеживание "
+"активности."
+
+#: addon/appModules/whatsapp_root.py:458
+msgid "Toggle automatic reading of new messages"
+msgstr "Включить/выключить автоматическое чтение новых сообщений"
+
+#: addon/appModules/whatsapp_root.py:468
+msgid "Open current message in a dedicated text window"
+msgstr "Открыть текущее сообщение в отдельном текстовом окне"
+
+#: addon/appModules/whatsapp_root.py:480
+msgid "Copy current message to clipboard"
+msgstr "Скопировать текущее сообщение в буфер обмена"
+
+#: addon/appModules/whatsapp_root.py:492
+msgid "Initiate voice call"
+msgstr "Начать голосовой вызов"
+
+#: addon/appModules/whatsapp_root.py:499
+msgid "Initiate video call"
+msgstr "Начать видеовызов"
+
+#: addon/appModules/whatsapp_root.py:506
+msgid ""
+"Moves to the next object in a flattened view of the object navigation "
+"hierarchy"
+msgstr ""
+"Перейти к следующему объекту в плоском представлении иерархии объектной "
+"навигации"
+
+#: addon/appModules/whatsapp_root.py:521
+msgid ""
+"Moves to the previous object in a flattened view of the object navigation "
+"hierarchy"
+msgstr ""
+"Перейти к предыдущему объекту в плоском представлении иерархии объектной "
+"навигации"
+
+#: addon/appModules/whatsapp_root.py:535
+msgid "Prevents accidental toggling of Browse Mode in WhatsApp"
+msgstr "Предотвращает случайное переключение режима обзора в WhatsApp"
+
+#: addon/appModules/whatsapp_root.py:559
+msgid "Browse Mode is disabled for WhatsApp to ensure best experience."
+msgstr ""
+"Для обеспечения наилучшего взаимодействия режим обзора в WhatsApp отключён."
+
+#: addon/appModules/whatsapp_root.py:561
+msgid "Browse Mode disabled"
+msgstr "Режим обзора отключён"
+
+#: addon/globalPlugins/whatsapp_connector.py:27
+msgid "Filter phone numbers in chat headers"
+msgstr "Фильтровать номера телефонов в заголовках чатов"
+
+#: addon/globalPlugins/whatsapp_connector.py:33
+msgid "Read usage hints while navigating chat list"
+msgstr "Озвучивать подсказки по использованию при перемещении по списку чатов"
+
+#: addon/globalPlugins/whatsapp_connector.py:38
+msgid "Disable browse mode lock (not recommended)"
+msgstr "Отключить блокировку режима обзора (не рекомендуется)"
+
+#: buildVars.py:21
+msgid "WhatsApp Desktop Enhancer"
+msgstr "WhatsApp Desktop Enhancer (Улучшения для WhatsApp Desktop)"
+
+#: buildVars.py:24
+msgid "Accessibility enhancements for WhatsApp Desktop (WebView2)"
+msgstr ""
+"Это дополнение добавляет улучшения доступности для WhatsApp Desktop на "
+"WebView2"
+
+#: buildVars.py:29
+msgid "added settings to disable browse mode locking"
+msgstr "добавлены настройки для отключения блокировки режима обзора"
+
+#~ msgid "Visor de consola"
+#~ msgstr "Просмотр консоли"
+
+#~ msgid "Muestra el visor de consola"
+#~ msgstr "Показать окно просмотра консоли"
+
+#~ msgid "Por favor, espere. Hay otro proceso en marcha."
+#~ msgstr ""
+#~ "Пожалуйста, подождите. В настоящее время выполняется ещё один процесс."
+
+#~ msgid "Por favor, cierre el diálogo actual antes de iniciar uno nuevo."
+#~ msgstr "Пожалуйста, закройте текущее диалог, прежде чем запускать новый."
+
+#~ msgid "Esta no es una ventana de consola."
+#~ msgstr "Это не окно консоли."
+
+#~ msgid "No se encontró texto en la consola"
+#~ msgstr "Текст в консоли не найден"
+
+#~ msgid "Copia el contenido completo de la consola al portapapeles (Rápido)"
+#~ msgstr "Быстро копирует полный текст консоли в буфер обмена"
+
+#~ msgid "Contenido de consola copiado"
+#~ msgstr "Текст консоли скопирован в буфер обмена"
+
+#~ msgid "Error al copiar contenido"
+#~ msgstr "Ошибка при копировании текста консоли"
+
+#~ msgid ""
+#~ "Realiza un clic derecho en la ventana de consola enfocada para copiar el "
+#~ "contenido del portapapeles"
+#~ msgstr ""
+#~ "Выполняет щелчок правой кнопкой мыши по окну консоли в фокусе для "
+#~ "копирования содержимого буфера обмена"
+
+#~ msgid "La ventana enfocada no es una consola."
+#~ msgstr "Окно в фокусе не является консолью."
+
+#~ msgid "Abre el lanzador de consolas de Windows"
+#~ msgstr "Открыть  запуск консоли Windows"
+
+#~ msgid "Ya hay una instancia del lanzador de consolas abierta."
+#~ msgstr "Запуск консоли уже открыт."
+
+#~ msgid "No se encontró una selección válida."
+#~ msgstr "Текст в консоли не найден."
+
+#~ msgid "Lanzador de Consolas"
+#~ msgstr "Запуск консоли"
+
+#~ msgid "Abrir CMD aquí"
+#~ msgstr "Открыть командную строку"
+
+#~ msgid "Abrir CMD como Administrador"
+#~ msgstr "Открыть командную строку от имени администратора"
+
+#~ msgid "Abrir PowerShell aquí"
+#~ msgstr "Открыть PowerShell"
+
+#~ msgid "Abrir PowerShell como Administrador"
+#~ msgstr "Открыть PowerShell от имени Администратора"
+
+#~ msgid "Abrir Windows Terminal aquí"
+#~ msgstr "Открыть Терминал Windows"
+
+#~ msgid "Abrir Windows Terminal como Administrador"
+#~ msgstr "Открыть Терминал Windows от имени Администратора"
+
+#~ msgid "Abrir Git Bash aquí"
+#~ msgstr "Открыть git bash"
+
+#~ msgid "Abrir Git Bash como Administrador"
+#~ msgstr "Открыть git bash от имени администратора"
+
+#~ msgid "Abrir Visual Studio Developer (32-bit)"
+#~ msgstr "Открыть консоль Visual Studio Developer (32-разрядная версия)"
+
+#~ msgid "Abrir Visual Studio Developer (32-bit) como Administrador"
+#~ msgstr ""
+#~ "Открыть консоль Visual Studio Developer (32-разрядная версия) от имени "
+#~ "администратора"
+
+#~ msgid "Abrir Visual Studio Developer (64-bit)"
+#~ msgstr "Открыть консоль Visual Studio Developer (64-разрядная версия)"
+
+#~ msgid "Abrir Visual Studio Developer (64-bit) como Administrador"
+#~ msgstr ""
+#~ "Открыть консоль Visual Studio Developer (64-разрядная версия) от имени "
+#~ "администратора"
+
+#~ msgid "Abrir PowerShell 7 (Core) aquí"
+#~ msgstr "Открыть PowerShell 7 (Core)"
+
+#~ msgid "Abrir PowerShell 7 (Core) como Administrador"
+#~ msgstr "Открыть PowerShell 7 (Core) от имени Администратора"
+
+#~ msgid "Abrir WSL (Linux) aquí"
+#~ msgstr "Открыть WSL (Linux)"
+
+#~ msgid "Abrir WSL (Linux) como Administrador"
+#~ msgstr "Открыть WSL (Linux) от имени Администратора"
+
+#~ msgid "Directorio: {}"
+#~ msgstr "Каталог: {}"
+
+#~ msgid "Seleccione una consola:"
+#~ msgstr "Выберите консоль:"
+
+#~ msgid "&Abrir"
+#~ msgstr "&Открыть"
+
+#~ msgid "&Cancelar"
+#~ msgstr "От&менить"
+
+#~ msgid "Error al abrir la consola: {}"
+#~ msgstr "Ошибка при открытии консоли: {}"
+
+#~ msgid "Error"
+#~ msgstr "Ошибка"
+
+#~ msgid "Opciones de Visor de consola"
+#~ msgstr "Настройки просмотра консоли"
+
+#~ msgid "Tamaño de la fuente:"
+#~ msgstr "Размер шрифта:"
+
+#~ msgid "Usar fuente monoespaciada (Consolas)"
+#~ msgstr "Использовать моноширинный шрифт (консоли)"
+
+#~ msgid "Recordar tamaño y posición de la ventana"
+#~ msgstr "Запомнить размер и положение окна"
+
+#~ msgid "Emitir sonidos al activar/desactivar seguimiento"
+#~ msgstr "Воспроизводить звуки при включении или отключении слежения"
+
+#~ msgid "Emitir sonidos cada vez que el contenido se actualice"
+#~ msgstr "Воспроизводить звуки при обновлении содержимого"
+
+#~ msgid "Seguimiento cada (segundos):"
+#~ msgstr "Отслеживать каждые (секунд):"
+
+#~ msgid "Categorizar plugins en submenús"
+#~ msgstr "Группировать плагины в подменю"
+
+#~ msgid "Visual"
+#~ msgstr "Зрение"
+
+#~ msgid "Recordar última consola seleccionada"
+#~ msgstr "Запомнить последнюю выбранную консоль"
+
+#~ msgid "Mostrar consolas no instaladas en la lista"
+#~ msgstr "Показывать в списке не установленные консоли"
+
+#~ msgid "Lanzador"
+#~ msgstr "Запуск"
+
+#~ msgid "Seleccione los plugins que desea activar:"
+#~ msgstr "Выберите плагины, которые вы хотите включить:"
+
+#~ msgid "Plugins"
+#~ msgstr "Плагины"
+
+#~ msgid "Habilitar sistema de alertas y marcadores"
+#~ msgstr "Включить систему предупреждений и закладок"
+
+#~ msgid "Patrones (uno por línea):"
+#~ msgstr "Шаблоны (один на строку):"
+
+#~ msgid "Nota: Se avisará por voz y sonido al detectar estas palabras."
+#~ msgstr ""
+#~ "Примечание: При обнаружении этих слов будет выдано голосовое и звуковое "
+#~ "предупреждение."
+
+#~ msgid "Alertas"
+#~ msgstr "Предупреждения"
+
+#~ msgid "Aceptar"
+#~ msgstr "Принять"
+
+#~ msgid "&Guardar como...\tCtrl+S"
+#~ msgstr "&Сохранить как...\tCtrl+S"
+
+#~ msgid "&Opciones...\tCtrl+P"
+#~ msgstr "&Настройки...\tCtrl+Н"
+
+#~ msgid "&Salir\tAlt+F4"
+#~ msgstr "&Выход\tAlt+F4"
+
+#~ msgid "&Archivo"
+#~ msgstr "&Файл"
+
+#~ msgid "&Copiar\tCtrl+C"
+#~ msgstr "&Копировать\tCtrl+C"
+
+#~ msgid "&Seleccionar todo\tCtrl+A"
+#~ msgstr "&Выделить всё\tCtrl+A"
+
+#~ msgid "&Buscar...\tCtrl+F"
+#~ msgstr "&Искать...\tCtrl+F"
+
+#~ msgid "&Edición"
+#~ msgstr "&Правка"
+
+#~ msgid "&Posición actual\tF1"
+#~ msgstr "&Текущее положение\tF1"
+
+#~ msgid "&Ir a línea...\tCtrl+G"
+#~ msgstr "&Перейти к строке...\tCtrl+G"
+
+#~ msgid "&Actualizar contenido\tF5"
+#~ msgstr "&Обновить\tF5"
+
+#~ msgid "&Seguimiento automático\tCtrl+Shift+F"
+#~ msgstr "&Автоматическое слежение\tCtrl+Shift+F"
+
+#~ msgid "&Ver"
+#~ msgstr "&Вид"
+
+#~ msgid "&Plugins"
+#~ msgstr "&Плагины"
+
+#~ msgid "&Atajos de teclado\tF2"
+#~ msgstr "&Сочетания клавиш\tF2"
+
+#~ msgid "A&yuda"
+#~ msgstr "С&правка"
+
+#~ msgid "General"
+#~ msgstr "Общее"
+
+#~ msgid "No hay plugins habilitados"
+#~ msgstr "Нет включённых плагинов"
+
+#~ msgid "Línea: {} de {}"
+#~ msgstr "Строка: {} из {}"
+
+#~ msgid "Col: {}"
+#~ msgstr "Символ: {}"
+
+#~ msgid "Resultado del Plugin"
+#~ msgstr "Результат работы плагина"
+
+#~ msgid "Contenido copiado"
+#~ msgstr "Скопировано"
+
+#~ msgid "Seleccione un elemento de la lista:"
+#~ msgstr "Выберите элемент из списка:"
+
+#~ msgid "No se encontraron resultados para esta acción."
+#~ msgstr "Результаты для этого действия не найдены."
+
+#~ msgid "Copiado al portapapeles"
+#~ msgstr "Скопировано в буфер обмена"
+
+#~ msgid ""
+#~ "No se han podido extraer URLs, rutas de archivos ni direcciones IP del "
+#~ "contenido actual."
+#~ msgstr "URL-адреса, пути к файлам и IP-адреса не могут быть извлечены."
+
+#~ msgid "Extractor de Datos"
+#~ msgstr "Извлечение данных"
+
+#~ msgid "Seleccione elemento:"
+#~ msgstr "Выберите элемент:"
+
+#~ msgid "Dato copiado"
+#~ msgstr "Скопированные данные"
+
+#~ msgid "No se detectó ningún bloque JSON válido en la salida."
+#~ msgstr "В выводе не обнаружено допустимого блока JSON."
+
+#~ msgid "JSON Beauty"
+#~ msgstr "JSON Beauty"
+
+#~ msgid "JSON Formateado ({}/{})"
+#~ msgstr "Форматированный  JSON ({}/{})"
+
+#~ msgid "JSON detectado y procesado. Puede copiar este texto:"
+#~ msgstr "JSON обнаружен и обработан. Вы можете скопировать этот текст:"
+
+#~ msgid "JSON copiado al portapapeles"
+#~ msgstr "JSON скопирован в буфер обмена"
+
+#~ msgid "Guardar contenido"
+#~ msgstr "Сохранить"
+
+#~ msgid "Archivo guardado"
+#~ msgstr "Сохранённый файлл"
+
+#~ msgid "Texto a buscar:"
+#~ msgstr "Текст для поиска:"
+
+#~ msgid "Buscar"
+#~ msgstr "Поиск"
+
+#~ msgid "No se encontró: {}"
+#~ msgstr "Не найдено: {}"
+
+#~ msgid "Ir a línea (1-{}):"
+#~ msgstr "Перейти к строке (1-{}):"
+
+#~ msgid "Ir a línea"
+#~ msgstr "Перейти к строке"
+
+#~ msgid "Línea {}, columna {}"
+#~ msgstr "Строка {}, символ {}"
+
+#~ msgid ""
+#~ "Atajos de teclado de VisorConsolasXD:\n"
+#~ "\n"
+#~ "• Alt: Activar barra de menús\n"
+#~ "• Control+F: Buscar texto dentro del visor\n"
+#~ "• F3: Buscar siguiente coincidencia\n"
+#~ "• Shift+F3: Buscar coincidencia anterior\n"
+#~ "• Control+Shift+F: Activar/Desactivar Seguimiento Automático (Auto-Tail)\n"
+#~ "• Control+G: Ir a una línea específica\n"
+#~ "• Control+P: Abrir opciones y ajustes del complemento\n"
+#~ "• Control+S: Guardar el contenido actual como archivo .txt\n"
+#~ "• Control+C: Copiar el texto seleccionado\n"
+#~ "• Control+A: Seleccionar todo el texto\n"
+#~ "• F1: Anunciar posición actual del cursor (línea y columna)\n"
+#~ "• F2: Mostrar esta ayuda de atajos\n"
+#~ "• F5: Actualizar contenido capturando la consola de nuevo\n"
+#~ "• Escape: Cerrar el visor de consola\n"
+#~ "\n"
+#~ "Nota: El modo seguimiento automático refresca el contenido cada 2 "
+#~ "segundos y se desplaza al final automáticamente si hay texto nuevo. Puede "
+#~ "configurar los sonidos en el menú Archivo > Opciones."
+#~ msgstr ""
+#~ "Сочетания клавиш просмотра Консоли:\n"
+#~ "\n"
+#~ "• Alt: Открывает меню\n"
+#~ "• Control+F: Поиск текста\n"
+#~ "• F3: Найти следующее совпадение\n"
+#~ "• Shift+F3: Найти предыдущее совпадение\n"
+#~ "• Control+Shift+F: Включить / Выключить Автоматическое Слежение\n"
+#~ "• Control+G: Перейти к определённой строке\n"
+#~ "• Control+P: Открыть настройки дополнения\n"
+#~ "• Control+S: Сохраняет текущее содержимое в файл .txt\n"
+#~ "• Control+C: Копирует выделенный текст\n"
+#~ "• Control+A: Выделить всё\n"
+#~ "• F1: Объявить текущее положение курсора (строку и символ)\n"
+#~ "• F2: Показать эту справку по сочетаниям клавиш\n"
+#~ "• F5: Обновить содержимое, снова захватив консоль\n"
+#~ "• Escape: Закрывает просмотр консоли\n"
+#~ "\n"
+#~ "Примечание: В режиме автоматического слежения содержимое обновляется "
+#~ "каждые 2 секунды и автоматически прокручивается до конца, если появляется "
+#~ "новый текст. Вы можете настроить воспроизведение звуков в меню Файл > "
+#~ "Настройки."
+
+#~ msgid "Ayuda de Atajos"
+#~ msgstr "Справка по сочитаниям клавиш"
+
+#~ msgid ""
+#~ "El refresco de contenido para Windows Terminal estará disponible "
+#~ "próximamente."
+#~ msgstr ""
+#~ "Обновление содержимого для терминала Windows будет доступно в ближайшее "
+#~ "время."
+
+#~ msgid "Actualizando contenido..."
+#~ msgstr "Обновление содержимого..."
+
+#~ msgid "No se recibió contenido nuevo"
+#~ msgstr "Новое содержимое не получено"
+
+#~ msgid "Contenido actualizado"
+#~ msgstr "Обновлённое содержимое"
+
+#~ msgid "Error al actualizar"
+#~ msgstr "Ошибка обновления"
+
+#~ msgid "No se pudo actualizar el contenido: {}"
+#~ msgstr "Содержимое не может быть обновлено: {}"
+
+#~ msgid "Alerta detected: {}"
+#~ msgstr "Обнаружено предупреждение: {}"
+
+#~ msgid "Seguimiento activado ({}s)"
+#~ msgstr "Слежение включено ({} С)"
+
+#~ msgid "Seguimiento desactivado"
+#~ msgstr "Слежение отключено"
+
+#~ msgid "CMD (Símbolo del sistema)"
+#~ msgstr "CMD (командная строка)"
+
+#~ msgid "Consola de comandos clásica de Windows"
+#~ msgstr "Классическая консоль Windows"
+
+#~ msgid "PowerShell"
+#~ msgstr "PowerShell"
+
+#~ msgid "Windows PowerShell para automatización y scripts"
+#~ msgstr "Windows PowerShell для автоматизации и написания сценариев"
+
+#~ msgid "PowerShell 7 (Core)"
+#~ msgstr "PowerShell 7 (Core)"
+
+#~ msgid "Versión moderna y multiplataforma de PowerShell"
+#~ msgstr "Современная кроссплатформенная версия PowerShell"
+
+#~ msgid "WSL (Linux)"
+#~ msgstr "WSL (Linux)"
+
+#~ msgid "Subsistema de Windows para Linux"
+#~ msgstr "Подсистема Windows для Linux"
+
+#~ msgid "Windows Terminal"
+#~ msgstr "Терминал Windows"
+
+#~ msgid "Terminal moderna de Windows con pestañas y temas"
+#~ msgstr "Современный терминал Windows с вкладками и темами"
+
+#~ msgid "Git Bash"
+#~ msgstr "Git Bash"
+
+#~ msgid "Terminal Bash de Git para Windows"
+#~ msgstr "Терминал Git Bash для Windows"
+
+#~ msgid "Visual Studio Developer (32-bit)"
+#~ msgstr "Visual Studio Developer (32-разрядная версия)"
+
+#~ msgid "Consola de desarrollador de Visual Studio (32 bits)"
+#~ msgstr "Консоль разработчика Visual Studio (32-разрядная версия)"
+
+#~ msgid "Visual Studio Developer (64-bit)"
+#~ msgstr "Visual Studio Developer (64-разрядная версия)"
+
+#~ msgid "Consola de desarrollador de Visual Studio (64 bits)"
+#~ msgstr "Консоль разработчика Visual Studio (64-разрядная версия)"
+
+#~ msgid "Tipo de consola no soportado: {}"
+#~ msgstr "Тип терминала не поддерживается: {}"
+
+#~ msgid ""
+#~ "No se puede leer una consola administrada si NVDA no se ejecuta como "
+#~ "administrador."
+#~ msgstr ""
+#~ "Невозможно прочитать управляемую консоль, если NVDA не запущена от имени "
+#~ "администратора."
+
+#~ msgid "No se pudo encontrar la ventana de la consola."
+#~ msgstr "Не удалось найти окно консоли."
+
+#~ msgid ""
+#~ "Acceso denegado: No se puede leer una consola elevada desde una instancia "
+#~ "de NVDA no elevada."
+#~ msgstr ""
+#~ "Доступ запрещён: Консоль с повышенными правами не может быть прочитана из "
+#~ "экземпляра NVDA без повышенных прав."
+
+#~ msgid "No se pudo adjuntar a la consola del proceso (Error {})."
+#~ msgstr "Не удалось подключиться к процессу консоли (Ошибка {})."
+
+#~ msgid "No se pudo obtener el manejador de la consola."
+#~ msgstr "Не удалось получить обработчик консоли."
+
+#~ msgid "El sistema UI Automation de NVDA no está disponible."
+#~ msgstr "Система NVDA UI Automation недоступна."
+
+#~ msgid "No se pudo identificar el área de texto activa."
+#~ msgstr "Не удалось найти активный редактор."
+
+#~ msgid "Error al leer el terminal: {}"
+#~ msgstr "Ошибка чтения терминала: {}"
+
+#~ msgid "Generador de Informe IA"
+#~ msgstr "Генератор отчетов с помощью ИИ"
+
+#~ msgid "No hay contenido en la consola para analizar."
+#~ msgstr "Текст в консоли не найден"
+
+#~ msgid "Error de IA"
+#~ msgstr "Ошибка ИИ"
+
+#~ msgid "Informe de Análisis IA"
+#~ msgstr "Отчёт об анализе ИИ"
+
+#~ msgid "Cerrar"
+#~ msgstr "Закрыть"
+
+#~ msgid "Guardar"
+#~ msgstr "Сохранить"
+
+#~ msgid "Cancelar"
+#~ msgstr "Отменить"
+
+#~ msgid "Usar consola"
+#~ msgstr "Просмотр консоли"
+
+#~ msgid "Advertencia"
+#~ msgstr "Предупреждение"
+
+#~ msgid "Error al leer {}: {}"
+#~ msgstr "Ошибка чтения {}: {}"
+
+#~ msgid "Adjuntos: {} archivos"
+#~ msgstr "Вложения: {} файлов"
+
+#~ msgid "Sistema"
+#~ msgstr "Система"
+
+#~ msgid "Nueva selección detectada de la consola."
+#~ msgstr "Обнаружено новое выделение консоли."
+
+#~ msgid "Tú"
+#~ msgstr "Вы"
+
+#~ msgid "Pensando..."
+#~ msgstr "Размышление..."
+
+#~ msgid "Formato de respuesta inválido de la API"
+#~ msgstr "Неверный формат ответа API"
+
+#~ msgid "Historial de Comandos"
+#~ msgstr "История команд"
+
+#~ msgid "Extrae y lista los comandos ejecutados en la consola"
+#~ msgstr "Извлекает и выводит список команд, выполняемых в консоли"
+
+#~ msgid "No se encontraron tokens JWT válidos."
+#~ msgstr "Действительные токены JWT не найдены."
+
+#~ msgid "Monitor de Recursos"
+#~ msgstr "Монитор Ресурсов"
+
+#~ msgid "Muestra información básica de recursos del sistema"
+#~ msgstr "Отображает основную информацию о ресурсах системы"
+
+#~ msgid "Espacio libre en disco: {} GB"
+#~ msgstr "Свободное место на диске: {} ГБ"
+
+#~ msgid "Uso de memoria RAM: {}%"
+#~ msgstr "Использование оперативной памяти: {}%"
+
+#~ msgid "RAM disponible: {} MB de {} MB"
+#~ msgstr "Доступная оперативная память: {} МБ из {} МБ"
+
+#~ msgid "No se pudo obtener información detallada de la memoria."
+#~ msgstr "Не удалось получить подробную информацию опамяти."
+
+#~ msgid "Versión de NVDA: {}"
+#~ msgstr "Версия NVDA: {}"
+
+#~ msgid "Resumen de Actividad"
+#~ msgstr "Краткая сводка активности"
+
+#~ msgid ""
+#~ "Analiza el texto para identificar herramientas de desarrollo y dar "
+#~ "estadísticas"
+#~ msgstr ""
+#~ "Анализирует текст, чтобы определить инструменты разработки и предоставить "
+#~ "статистику"
+
+#~ msgid "Estadísticas Generales:"
+#~ msgstr "Общая Статистика:"
+
+#~ msgid "- Total de líneas: {}"
+#~ msgstr "- Всего строк: {}"
+
+#~ msgid "- Total de palabras: {}"
+#~ msgstr "- Всего слов: {}"
+
+#~ msgid "Herramientas Detectadas:"
+#~ msgstr "Обнаруженные Инструменты:"
+
+#~ msgid "- No se detectaron herramientas específicas."
+#~ msgstr "- Никаких конкретных инструментов обнаружено не было."
+
+#~ msgid "Formateador SQL Lite"
+#~ msgstr "Линтер SQL Lite"
+
+#~ msgid "Intenta dar formato legible a consultas SQL"
+#~ msgstr "Пытается отформатировать SQL-запросы в удобочитаемом формате"
+
+#~ msgid "Analizador de StackTrace"
+#~ msgstr "Stack Trace Analyzer"
+
+#~ msgid ""
+#~ "Analiza el log en busca de errores de Python y extrae rutas de archivos"
+#~ msgstr ""
+#~ "Анализирует журнал на наличие ошибок Python и извлекает пути к файлам"
+
+#~ msgid ""
+#~ "No se han encontrado trazas de error (Stack Traces) de Python en el texto."
+#~ msgstr "В тексте не обнаружены ошибки Python (Stack Traces)."
+
+#~ msgid "Conversor de Marcas de Tiempo"
+#~ msgstr "Преобразование меток времени"
+
+#~ msgid "Convierte números de marcas de tiempo Unix a fechas y horas legibles"
+#~ msgstr ""
+#~ "Преобразовывать номера меток времени Unix в удобочитаемый формат даты и "
+#~ "времени"
+
+#~ msgid "Error: {}"
+#~ msgstr "Ошибка: {}"
+
+#~ msgid "Advertencia: {}"
+#~ msgstr "Предупреждение: {}"
+
+#~ msgid "Visor para las consolas de Windows"
+#~ msgstr "Просмотр консоли Windows"
+
+#~ msgid ""
+#~ "* Pequeño complemento para mostrar en un dialogo el contenido de las "
+#~ "consolas de Windows\n"
+#~ "* Lanzador de consolas CMD, PowerShell, Terminal, Bash, Visual Studio "
+#~ "developer.\n"
+#~ "* Copiado del portapapeles en consola enfocada de manera fácil.\n"
+#~ "\n"
+#~ "Asignar teclas en Gestos de entrada / Visor de consola."
+#~ msgstr ""
+#~ "Небольшое дополнение для отображения содержимого консоли Windows в "
+#~ "диалоговом окне\n"
+#~ "* Запуск консоли в командной строке, PowerShell, Терминале Windows, Bash, "
+#~ "Visual Studio developer.\n"
+#~ "* Простое копирование из буфера обмена в focused console.\n"
+#~ "\n"
+#~ "Назначьте клавишу в меню Жесты ввода / Просмотр консоли Windows."
+
+#~ msgid "No se pudieron obtener las coordenadas de la ventana de la consola."
+#~ msgstr "Не удалось получить координаты окна консоли."
+
+#~ msgid "Error al intentar realizar el clic derecho: {}"
+#~ msgstr "Ошибка при попытке выполнить щелчок правой кнопкой мыши: {}"
+
+#~ msgid "No se pudo obtener"
+#~ msgstr "Не удалось найти"
+
+#~ msgid "Error:"
+#~ msgstr "Ошибка:"
+
+#~ msgid "Se ha producido un error: {} (tipo de error: {})"
+#~ msgstr "Произошла ошибка: {} (тип ошибки: {})"
+
+#~ msgid "&Registro"
+#~ msgstr "&Лог"
+
+#~ msgid "No hay coincidencias encontradas."
+#~ msgstr "Совпадений не найдено."
+
+#~ msgid "Busqueda"
+#~ msgstr "Ошибка поиска"
+
+#~ msgid "Error guardando log: %s"
+#~ msgstr "Ошибка сохранения в журнал: %s"
+
+#~ msgid "El archivo temporal no fue encontrado"
+#~ msgstr "Временный файл не найден"
+
+#~ msgid "Permiso denegado para eliminar el archivo temporal"
+#~ msgstr "Отказано в разрешении на удаление временного файла"
+
+#~ msgid "Ocurrió un error al intentar eliminar el archivo temporal: {}"
+#~ msgstr "Произошла ошибка при попытке удалить временный файл: {}"
+
+#~ msgid "&Buscar"
+#~ msgstr "&Искать"
