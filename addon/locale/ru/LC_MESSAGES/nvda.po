@@ -265,7 +265,6 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "Abrir WSL (Linux) como Administrador"
 #~ msgstr "Открыть WSL (Linux) от имени Администратора"
 
-#, python-brace-format
 #~ msgid "Directorio: {}"
 #~ msgstr "Каталог: {}"
 
@@ -278,7 +277,6 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "&Cancelar"
 #~ msgstr "От&менить"
 
-#, python-brace-format
 #~ msgid "Error al abrir la consola: {}"
 #~ msgstr "Ошибка при открытии консоли: {}"
 
@@ -398,11 +396,9 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "No hay plugins habilitados"
 #~ msgstr "Нет включённых плагинов"
 
-#, python-brace-format
 #~ msgid "Línea: {} de {}"
 #~ msgstr "Строка: {} из {}"
 
-#, python-brace-format
 #~ msgid "Col: {}"
 #~ msgstr "Символ: {}"
 
@@ -441,7 +437,6 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "JSON Beauty"
 #~ msgstr "JSON Beauty"
 
-#, python-brace-format
 #~ msgid "JSON Formateado ({}/{})"
 #~ msgstr "Форматированный  JSON ({}/{})"
 
@@ -463,18 +458,15 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "Buscar"
 #~ msgstr "Поиск"
 
-#, python-brace-format
 #~ msgid "No se encontró: {}"
 #~ msgstr "Не найдено: {}"
 
-#, python-brace-format
 #~ msgid "Ir a línea (1-{}):"
 #~ msgstr "Перейти к строке (1-{}):"
 
 #~ msgid "Ir a línea"
 #~ msgstr "Перейти к строке"
 
-#, python-brace-format
 #~ msgid "Línea {}, columna {}"
 #~ msgstr "Строка {}, символ {}"
 
@@ -544,15 +536,12 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "Error al actualizar"
 #~ msgstr "Ошибка обновления"
 
-#, python-brace-format
 #~ msgid "No se pudo actualizar el contenido: {}"
 #~ msgstr "Содержимое не может быть обновлено: {}"
 
-#, python-brace-format
 #~ msgid "Alerta detected: {}"
 #~ msgstr "Обнаружено предупреждение: {}"
 
-#, python-brace-format
 #~ msgid "Seguimiento activado ({}s)"
 #~ msgstr "Слежение включено ({} С)"
 
@@ -607,7 +596,6 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "Consola de desarrollador de Visual Studio (64 bits)"
 #~ msgstr "Консоль разработчика Visual Studio (64-разрядная версия)"
 
-#, python-brace-format
 #~ msgid "Tipo de consola no soportado: {}"
 #~ msgstr "Тип терминала не поддерживается: {}"
 
@@ -628,7 +616,6 @@ msgstr "добавлены настройки для отключения бло
 #~ "Доступ запрещён: Консоль с повышенными правами не может быть прочитана из "
 #~ "экземпляра NVDA без повышенных прав."
 
-#, python-brace-format
 #~ msgid "No se pudo adjuntar a la consola del proceso (Error {})."
 #~ msgstr "Не удалось подключиться к процессу консоли (Ошибка {})."
 
@@ -641,15 +628,12 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "No se pudo identificar el área de texto activa."
 #~ msgstr "Не удалось найти активный редактор."
 
-#, python-brace-format
 #~ msgid "Error al leer el terminal: {}"
 #~ msgstr "Ошибка чтения терминала: {}"
 
 #~ msgid "Generador de Informe IA"
 #~ msgstr "Генератор отчетов с помощью ИИ"
 
-#, fuzzy
-#~| msgid "No se encontró texto en la consola"
 #~ msgid "No hay contenido en la consola para analizar."
 #~ msgstr "Текст в консоли не найден"
 
@@ -668,19 +652,15 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "Cancelar"
 #~ msgstr "Отменить"
 
-#, fuzzy
-#~| msgid "Visor de consola"
 #~ msgid "Usar consola"
 #~ msgstr "Просмотр консоли"
 
 #~ msgid "Advertencia"
 #~ msgstr "Предупреждение"
 
-#, python-brace-format
 #~ msgid "Error al leer {}: {}"
 #~ msgstr "Ошибка чтения {}: {}"
 
-#, python-brace-format
 #~ msgid "Adjuntos: {} archivos"
 #~ msgstr "Вложения: {} файлов"
 
@@ -714,22 +694,18 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "Muestra información básica de recursos del sistema"
 #~ msgstr "Отображает основную информацию о ресурсах системы"
 
-#, python-brace-format
 #~ msgid "Espacio libre en disco: {} GB"
 #~ msgstr "Свободное место на диске: {} ГБ"
 
-#, python-brace-format
 #~ msgid "Uso de memoria RAM: {}%"
 #~ msgstr "Использование оперативной памяти: {}%"
 
-#, python-brace-format
 #~ msgid "RAM disponible: {} MB de {} MB"
 #~ msgstr "Доступная оперативная память: {} МБ из {} МБ"
 
 #~ msgid "No se pudo obtener información detallada de la memoria."
 #~ msgstr "Не удалось получить подробную информацию опамяти."
 
-#, python-brace-format
 #~ msgid "Versión de NVDA: {}"
 #~ msgstr "Версия NVDA: {}"
 
@@ -746,11 +722,9 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "Estadísticas Generales:"
 #~ msgstr "Общая Статистика:"
 
-#, python-brace-format
 #~ msgid "- Total de líneas: {}"
 #~ msgstr "- Всего строк: {}"
 
-#, python-brace-format
 #~ msgid "- Total de palabras: {}"
 #~ msgstr "- Всего слов: {}"
 
@@ -786,11 +760,9 @@ msgstr "добавлены настройки для отключения бло
 #~ "Преобразовывать номера меток времени Unix в удобочитаемый формат даты и "
 #~ "времени"
 
-#, python-brace-format
 #~ msgid "Error: {}"
 #~ msgstr "Ошибка: {}"
 
-#, python-brace-format
 #~ msgid "Advertencia: {}"
 #~ msgstr "Предупреждение: {}"
 
@@ -817,7 +789,6 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "No se pudieron obtener las coordenadas de la ventana de la consola."
 #~ msgstr "Не удалось получить координаты окна консоли."
 
-#, python-brace-format
 #~ msgid "Error al intentar realizar el clic derecho: {}"
 #~ msgstr "Ошибка при попытке выполнить щелчок правой кнопкой мыши: {}"
 
@@ -827,7 +798,6 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "Error:"
 #~ msgstr "Ошибка:"
 
-#, python-brace-format
 #~ msgid "Se ha producido un error: {} (tipo de error: {})"
 #~ msgstr "Произошла ошибка: {} (тип ошибки: {})"
 
@@ -840,7 +810,6 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "Busqueda"
 #~ msgstr "Ошибка поиска"
 
-#, python-format
 #~ msgid "Error guardando log: %s"
 #~ msgstr "Ошибка сохранения в журнал: %s"
 
@@ -850,7 +819,6 @@ msgstr "добавлены настройки для отключения бло
 #~ msgid "Permiso denegado para eliminar el archivo temporal"
 #~ msgstr "Отказано в разрешении на удаление временного файла"
 
-#, python-brace-format
 #~ msgid "Ocurrió un error al intentar eliminar el archivo temporal: {}"
 #~ msgstr "Произошла ошибка при попытке удалить временный файл: {}"
 

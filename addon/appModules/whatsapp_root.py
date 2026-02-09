@@ -128,7 +128,12 @@ class AppModule(appModuleHandler.AppModule):
 		if not self._last_spoken_text: return
 		self._is_reviewing = True
 		try:
-			if self._review_cursor > 0: self._review_cursor -= 1
+			if self._review_cursor > 0:
+				self._review_cursor -= 1
+			
+			if self._review_cursor >= len(self._last_spoken_text):
+				self._review_cursor = len(self._last_spoken_text) - 1
+				
 			speech.speak([self._last_spoken_text[self._review_cursor]])
 		finally: self._is_reviewing = False
 
@@ -137,7 +142,10 @@ class AppModule(appModuleHandler.AppModule):
 		if not self._last_spoken_text: return
 		self._is_reviewing = True
 		try:
-			if self._review_cursor < len(self._last_spoken_text) - 1: self._review_cursor += 1
+			if self._review_cursor < len(self._last_spoken_text) - 1:
+				self._review_cursor += 1
+			elif self._review_cursor >= len(self._last_spoken_text):
+				self._review_cursor = len(self._last_spoken_text) - 1
 			speech.speak([self._last_spoken_text[self._review_cursor]])
 		finally: self._is_reviewing = False
 
