@@ -1,15 +1,11 @@
-# WhatsApp NG - English Translation
-# Copyright (C) 2025
-# This file is distributed under the same license as the whatsAppNG package.
-# Nuno Costa <nrfcosta21@gmail.com>, 2025.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: WhatsApp Desktop Enhancer 0.9\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2026-02-10 20:11+0300\n"
 "PO-Revision-Date: 2026-02-10 20:29+0300\n"
-"Last-Translator: Umut KORKMAZ <umutkork@gmail.com>\n"
+"Last-Translator: Russian translation team <nvda.ru>, Danil Kostenkov "
+"<danilkostenkov38@gmail.com>\n"
 "Language-Team: Russian translation team <nvda.ru>, Danil Kostenkov "
 "<danilkostenkov38@gmail.com>\n"
 "Language: ru_RU\n"
@@ -176,101 +172,3 @@ msgstr ""
 msgid "added rusian translations."
 msgstr "добавлены переводы локализации и документации на русский язык."
 
-#~ msgid "Copy current message to clipboard"
-#~ msgstr "Скопировать текущее сообщение в буфер обмена"
-
-#~ msgid "Cannot copy"
-#~ msgstr "Не удалось скопировать"
-
-#~ msgid "No audio message found"
-#~ msgstr "Голосовое сообщение не найдено"
-
-#~ msgid "Read complete message (clicks 'read more' button)"
-#~ msgstr ""
-#~ "Прочитать текст сообщения полностью (нажимает кнопку «читать дальше»)"
-
-#~ msgid "Text not found"
-#~ msgstr "Текст не найден"
-
-#~ msgid "No menu found"
-#~ msgstr "Меню не найдено"
-
-#~ msgid "Focus message composer"
-#~ msgstr "Поместить фокус на поле написать сообщение"
-
-#~ msgid "Message composer not found"
-#~ msgstr "Поле написать сообщение не найдено"
-
-#~ msgid "Go to WhatsApp conversation list"
-#~ msgstr "Перейти к списку чатов WhatsApp"
-
-#~ msgid "Conversation list not found"
-#~ msgstr "Список чатов не найден"
-
-#~ msgid "Go to WhatsApp message list"
-#~ msgstr "Перейти к списку сообщений WhatsApp"
-
-#~ msgid "Message list not found"
-#~ msgstr "Список сообщений не найден"
-
-#~ msgid "Toggle phone number filtering in conversation list"
-#~ msgstr "Переключить фильтрацию озвучивания номеров телефонов в списке чатов"
-
-#~ msgid "Use this command in the conversation list"
-#~ msgstr "Используйте эту команду в списке чатов"
-
-#~ msgid "Conversation list: phone numbers hidden"
-#~ msgstr "Список чатов: не озвучивать номера телефонов"
-
-#~ msgid "Conversation list: phone numbers visible"
-#~ msgstr "Список чатов: озвучивать номера телефонов"
-
-#~ msgid "Toggle phone number filtering in message list"
-#~ msgstr ""
-#~ "Переключить фильтрацию озвучивания номеров телефонов в списке сообщений"
-
-#~ msgid "Use this command in the message list"
-#~ msgstr "Используйте эту команду в списке сообщений"
-
-#~ msgid "Message list: phone numbers hidden"
-#~ msgstr "Список сообщений: не озвучивать номера телефонов"
-
-#~ msgid "Message list: phone numbers visible"
-#~ msgstr "Список сообщений: озвучивать номера телефонов"
-
-#~ msgid "Toggle automatic Focus Mode"
-#~ msgstr "Переключить автоматическое включение режима редактирования"
-
-#~ msgid "Auto Focus Mode: enabled"
-#~ msgstr "Автоматическое включение режима редактирования: включено"
-
-#~ msgid "Auto Focus Mode: disabled"
-#~ msgstr "Автоматическое включение режима редактирования: выключено"
-
-#~ msgid ""
-#~ "Provides accessibility improvements for the web-based WhatsApp Desktop, "
-#~ "including navigation shortcuts, message interaction enhancements, and "
-#~ "better screen reader support."
-#~ msgstr ""
-#~ "Это дополнение предоставляет улучшения доступности для веб-версии "
-#~ "WhatsApp Desktop, предоставляя сочитания клавиш для быстрого перехода к "
-#~ "элементам интерфейса, улучшения взаимодействия с сообщениями и улучшенную "
-#~ "поддержку программ экранного доступа."
-
-#~ msgid ""
-#~ "Initial release.\n"
-#~ "- Navigation shortcuts for conversation list, message list, and message "
-#~ "composer.\n"
-#~ "- Voice message playback with support for individual chats and groups.\n"
-#~ "- Context menu access for message actions.\n"
-#~ "- Phone number filtering toggle for conversations and messages.\n"
-#~ "- Automatic focus mode activation in WhatsApp Desktop."
-#~ msgstr ""
-#~ "Первая версия.\n"
-#~ "- Добавлены горячие клавиши для списка чатов, списка сообщений и поля "
-#~ "написать сообщение.\n"
-#~ "- Поддержка воспроизведения голосовых сообщений для чатов и групп.\\n\n"
-#~ "- Доступ к контекстному меню для действий с сообщениями.\n"
-#~ "- Переключатель фильтрации озвучивания номеров телефонов для чатов и "
-#~ "списка сообщений.\n"
-#~ "- Автоматическое включение режима редактирования в WhatsApp Desktop."
