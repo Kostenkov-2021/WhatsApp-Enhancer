@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WhatsApp Desktop Enhancer 0.9\n"
+"Project-Id-Version: WhatsApp Desktop Enhancer 1.0.9\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2026-02-10 20:11+0300\n"
-"PO-Revision-Date: 2026-02-10 20:29+0300\n"
+"PO-Revision-Date: 2026-02-11 12:22+0300\n"
 "Last-Translator: Russian translation team <nvda.ru>, Danil Kostenkov "
 "<danilkostenkov38@gmail.com>\n"
 "Language-Team: Russian translation team <nvda.ru>, Danil Kostenkov "
@@ -171,4 +171,3 @@ msgstr ""
 #: buildVars.py:29
 msgid "added rusian translations."
 msgstr "добавлены переводы локализации и документации на русский язык."
-
