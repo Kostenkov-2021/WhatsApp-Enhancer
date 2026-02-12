@@ -1,0 +1,232 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
+"POT-Creation-Date: 2026-02-10 16:40+0200\n"
+"PO-Revision-Date: 2026-02-10 21:41+0200\n"
+"Last-Translator: Volodymyr Pyrih <vp88.mobile@gmail.com>\n"
+"Language-Team: \n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.8\n"
+"X-Poedit-Basepath: .\n"
+
+#: addon\globalPlugins\whatsapp_connector.py:19
+#: addon\appModules\whatsapp_root.py:32
+msgid "WhatsApp Enhancer"
+msgstr "Покращувач WhatsApp"
+
+#: addon\globalPlugins\whatsapp_connector.py:24
+msgid "Filter phone numbers in chat headers"
+msgstr "Фільтрувати номери телефонів у заголовках чатів"
+
+#: addon\globalPlugins\whatsapp_connector.py:26
+msgid "Read usage hints while navigating chat list"
+msgstr "Читати підказки щодо використання під час перегляду списку чатів"
+
+#: addon\globalPlugins\whatsapp_connector.py:28
+msgid "Disable browse mode lock (not recommended)"
+msgstr "Вимкнути блокування режиму огляду (не рекомендується)"
+
+#: addon\appModules\whatsapp_root.py:126
+msgid "Review previous character"
+msgstr "Переглянути попередній символ"
+
+#: addon\appModules\whatsapp_root.py:140
+msgid "Review next character"
+msgstr "Переглянути наступний символ"
+
+#: addon\appModules\whatsapp_root.py:152
+msgid "Review previous word"
+msgstr "Переглянути попереднє слово"
+
+#: addon\appModules\whatsapp_root.py:165
+msgid "Review next word"
+msgstr "Переглянути наступне слово"
+
+#: addon\appModules\whatsapp_root.py:179
+msgid "Review previous line"
+msgstr "Переглянути попередній рядок"
+
+#: addon\appModules\whatsapp_root.py:188
+msgid "Review next line"
+msgstr "Переглянути наступний рядок"
+
+#: addon\appModules\whatsapp_root.py:197
+msgid "Inspector"
+msgstr "Інспектор"
+
+#: addon\appModules\whatsapp_root.py:202
+#, python-brace-format
+msgid "L:{left}, T:{top}, W:{width}, H:{height}"
+msgstr "Л:{left}, В:{top}, Ш:{width}, В:{height}"
+
+#: addon\appModules\whatsapp_root.py:206
+msgid "No Loc"
+msgstr "Місцерозташування невідоме"
+
+#: addon\appModules\whatsapp_root.py:209
+#, python-brace-format
+msgid "Role: {role}, {loc_str}, Name: '{name}', ID: {auto_id}"
+msgstr "Роль: {role}, {loc_str}, Назва: “{name}”, ID: {auto_id}"
+
+#: addon\appModules\whatsapp_root.py:213
+msgid "Read title"
+msgstr "Прочитати заголовок"
+
+#: addon\appModules\whatsapp_root.py:217 addon\appModules\whatsapp_root.py:225
+msgid "enabled"
+msgstr "увімкнено"
+
+#: addon\appModules\whatsapp_root.py:217 addon\appModules\whatsapp_root.py:225
+msgid "disabled"
+msgstr "вимкнено"
+
+#: addon\appModules\whatsapp_root.py:218
+#, python-brace-format
+msgid "Chat activity tracking {state}"
+msgstr "Відстеження активності в чаті {state}"
+
+#: addon\appModules\whatsapp_root.py:223
+msgid "Toggle live chat"
+msgstr "Увімкнути або вимкнути живий чат"
+
+#: addon\appModules\whatsapp_root.py:226
+#, python-brace-format
+msgid "Automatic new message reading {state}"
+msgstr "Автоматичне читання нового повідомлення {state}"
+
+#: addon\appModules\whatsapp_root.py:228
+msgid "Dedicated text window"
+msgstr "Показує текст в окремому діалозі"
+
+#: addon\appModules\whatsapp_root.py:231
+msgid "Message Text"
+msgstr "Текст повідомлення"
+
+#: addon\appModules\whatsapp_root.py:234
+msgid "Copy message"
+msgstr "Копіювати повідомлення"
+
+#: addon\appModules\whatsapp_root.py:239
+msgid "Copied"
+msgstr "Скопійовано"
+
+#: addon\appModules\whatsapp_root.py:242
+msgid "Context menu"
+msgstr "Контекстне меню"
+
+#: addon\appModules\whatsapp_root.py:253
+msgid "Play voice message"
+msgstr "Відтворити голосове повідомлення"
+
+#: addon\appModules\whatsapp_root.py:264
+msgid "Voice call"
+msgstr "Голосовий виклик"
+
+#: addon\appModules\whatsapp_root.py:267
+msgid "Video call"
+msgstr "Відеовиклик"
+
+#: addon\appModules\whatsapp_root.py:270
+msgid "Next object"
+msgstr "Наступний об'єкт"
+
+#: addon\appModules\whatsapp_root.py:276
+msgid "Previous object"
+msgstr "Попередній об'єкт"
+
+#: addon\appModules\whatsapp_root.py:282
+msgid "Toggle browse mode"
+msgstr "Перемкнути режим огляду"
+
+#: addon\appModules\whatsapp_root.py:296
+msgid "Browse Mode is disabled for WhatsApp"
+msgstr "Режим огляду вимкнено для WhatsApp"
+
+#: addon\appModules\wh_observers.py:189
+#, python-brace-format
+msgid "Progress: {val}"
+msgstr "Прогрес: {val}"
+
+#. Add-on summary/title, usually the user visible name of the add-on
+#. Translators: Summary/title for this add-on
+#. to be shown on installation and add-on information found in add-on store
+#: buildVars.py:21
+msgid "WhatsApp Desktop Enhancer"
+msgstr "Покращувач WhatsApp"
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-on store
+#: buildVars.py:24
+msgid "Accessibility enhancements for WhatsApp Desktop (WebView2)"
+msgstr "Покращення доступності для WhatsApp Desktop (WebView2)"
+
+#. Brief changelog for this version
+#. Translators: what's new content for the add-on version to be shown in the add-on store
+#: buildVars.py:29
+msgid "added rusian translations."
+msgstr "Додано російський переклад."
+
+#~ msgid "Toggle phone number filtering in speech"
+#~ msgstr "Увімкнути/вимкнути фільтрування телефонних номерів у мовленні"
+
+#~ msgid "on"
+#~ msgstr "увімкнено"
+
+#~ msgid "off"
+#~ msgstr "вимкнено"
+
+#, python-brace-format
+#~ msgid "Phone number filtering {state}"
+#~ msgstr "Фільтрація телефонних номерів {state}"
+
+#~ msgid "Error accessing configuration"
+#~ msgstr "Помилка доступу до конфігурації"
+
+#~ msgid "Focus the chat list"
+#~ msgstr "Перейти до списку чатів"
+
+#~ msgid "Focus the message composer"
+#~ msgstr "Перейти до редактора повідомлення"
+
+#~ msgid "Focus the message list"
+#~ msgstr "Перейти до списку повідомлень"
+
+#~ msgid "Report accessibility properties of focused object"
+#~ msgstr "Повідомити властивості доступності сфокусованого об’єкта"
+
+#~ msgid "Read current chat title. Double press to toggle activity tracking."
+#~ msgstr "Прочитати назву поточного чату. Двічі натисніть, щоб увімкнути відстеження активності."
+
+#~ msgid "Toggle automatic reading of new messages"
+#~ msgstr "Увімкнути/вимкнути автоматичне читання нових повідомлень"
+
+#~ msgid "Open current message in a dedicated text window"
+#~ msgstr "Відкрити поточне повідомлення у спеціальному текстовому вікні"
+
+#~ msgid "Copy current message to clipboard"
+#~ msgstr "Копіювати поточне повідомлення в буфер обміну"
+
+#~ msgid "Moves to the next object in a flattened view of the object navigation hierarchy"
+#~ msgstr "Переходить до наступного об’єкта у спрощеному вигляді ієрархії навігації об’єкта"
+
+#~ msgid "Moves to the previous object in a flattened view of the object navigation hierarchy"
+#~ msgstr "Переходить до попереднього об’єкта у спрощеному перегляді ієрархії навігації об’єкта"
+
+#~ msgid "Prevents accidental toggling of Browse Mode in WhatsApp"
+#~ msgstr "Запобігає випадковому перемиканню режиму огляду у WhatsApp"
+
+#~ msgid "Browse Mode disabled"
+#~ msgstr "Режим огляду вимкнено"
+
+#~ msgid ""
+#~ "Fix AttributeError in Browse Mode toggle script\n"
+#~ "                   add line review commands\n"
+#~ "                   changed how the phone number filter works"
+#~ msgstr ""
+#~ "Виправлено помилку AttributeError у скрипті перемикання режиму огляду\n"
+#~ "Додано команди перегляду рядків\n"
+#~ "Змінено спосіб роботи фільтра телефонних номерів"
