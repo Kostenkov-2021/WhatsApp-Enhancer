@@ -9,7 +9,6 @@ from gui.settingsDialogs import SettingsPanel, NVDASettingsDialog
 addonHandler.initTranslation()
 
 SPEC = {
-	'automaticReadingOfNewMessages': 'boolean(default=False)',
 	'filter_phone_numbers': 'boolean(default=True)',
 	'read_usage_hints': 'boolean(default=True)',
 	'disable_browse_mode_lock': 'boolean(default=False)',

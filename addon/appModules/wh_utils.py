@@ -1,4 +1,3 @@
-
 import api
 import controlTypes
 import UIAHandler
@@ -23,6 +22,25 @@ def collect_elements(root, condition, max_items=50):
 			while child:
 				queue.append(child)
 				child = child.next
+		except: continue
+	return results
+
+def collect_elements_ordered(root, condition, max_items=100):
+	if not root: return []
+	results = []
+	stack = [root]
+	visited = 0
+	while stack and visited < max_items:
+		obj = stack.pop()
+		visited += 1
+		try:
+			if condition(obj): results.append(obj)
+			children = []
+			child = obj.lastChild
+			while child:
+				children.append(child)
+				child = child.previous
+			stack.extend(children)
 		except: continue
 	return results
 

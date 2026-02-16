@@ -112,6 +112,16 @@ Our filter automatically identifies and **silences these hints**, leaving only t
 *   **How it works:** The filter cleanly separates the actual content from the metadata, removing the instruction text while preserving important status updates like *"Read"*, *"Delivered"*, *"unread"*, or *"reactions"*.
 *   **Configuration:** This feature can be toggled via the "Read usage hints while navigating chat list" option in the settings panel.
 
+### 5. Virtual Navigation for Inaccessible Menus
+Certain parts of the modern WhatsApp interface—such as the Call menu and Settings panels—are difficult to navigate when Browse Mode is disabled. We have transformed these areas into fast, responsive **virtual menus**.
+
+*   **How it works:** When you focus on these areas (e.g., after pressing `Alt + Shift + C` for calls, or navigating to the Some settings dialog), NVDA captures the available options into a temporary list.
+*   **Virtual Browsing:** Use **Up or Down Arrows** to cycle through the options. NVDA will announce each item (like "Voice Call", "Profile", or "Status") along with its current state (e.g., "on" or "off"), without shifting your actual focus on the screen.
+*   **Quick Activation:** Press **Control + Enter** to immediately trigger the option you have selected.
+
+> [!IMPORTANT]
+> This feature is currently **experimental**. While it significantly improves access to previously unreachable menus, we are constantly refining the detection logic. If you have a more efficient method or find a bug, we highly encourage you to contribute via our GitHub repository.
+
 ## Feedback & Contributions
 
 We welcome suggestions, bug reports, and code contributions.

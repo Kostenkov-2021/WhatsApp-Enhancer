@@ -1,4 +1,3 @@
-
 import appModuleHandler
 from scriptHandler import script
 import ui
@@ -19,12 +18,193 @@ addonHandler.initTranslation()
 
 sys.path.insert(0, ".")
 from .text_window import TextWindow
-from .wh_observers import TitleObserver, ChatObserver, ProgressObserver
+from .wh_observers import ProgressObserver
 from .wh_navigation import (
-	perform_voice_call, 
-	perform_video_call
+	set_focus_and_navigator
 )
-from .wh_utils import find_by_automation_id, find_button_by_name
+from NVDAObjects.IAccessible.ia2Web import Ia2Web
+from .wh_utils import find_by_automation_id, find_button_by_name, collect_elements
+
+class CallMenuDialog(Ia2Web):
+	_v_idx = -1
+	_items_cache = None
+
+	def _get_items(self):
+		if self._items_cache: return self._items_cache
+		items = []
+		stack = [self]
+		visited = 0
+		while stack and visited < 200:
+			o = stack.pop()
+			visited += 1
+			if o != self:
+				is_item = o.role in (controlTypes.Role.BUTTON, controlTypes.Role.LISTITEM)
+				cls = getattr(o, "IA2Attributes", {}).get("class", "")
+				if "xjb2p0i" in cls or "xk390pu" in cls or "_ahkm" in cls: is_item = True
+				
+				if is_item:
+					name = o.name
+					if not name:
+						from .wh_utils import collect_elements
+						sub = collect_elements(o, lambda x: x.name, max_items=10)
+						name = " ".join([s.name for s in sub if s.name])
+					if name and name.strip():
+						items.append(o)
+						continue
+
+			try:
+				child = o.lastChild
+				while child:
+					stack.append(child)
+					child = child.previous
+			except: pass
+		self._items_cache = items
+		return self._items_cache
+
+	def _announce(self, items):
+		if not items or self._v_idx < 0: return
+		obj = items[self._v_idx]
+		name = obj.name
+		if not name:
+			from .wh_utils import collect_elements
+			sub = collect_elements(obj, lambda o: o.name, max_items=20)
+			name = " ".join([s.name for s in sub if s.name])
+		
+		state_list = []
+		for s_name in ("CHECKED", "SELECTED", "PRESSED", "ON"):
+			s_val = getattr(controlTypes.State, s_name, None)
+			if s_val and s_val in obj.states:
+				state_list.append(controlTypes.stateLabels[s_val])
+		
+		full_msg = name or _("Option")
+		if state_list: full_msg += f" ({', '.join(state_list)})"
+		ui.message(full_msg)
+
+	def script_next(self, gesture):
+		items = self._get_items()
+		if not items: return gesture.send()
+		self._v_idx = (self._v_idx + 1) % len(items)
+		self._announce(items)
+
+	def script_prev(self, gesture):
+		items = self._get_items()
+		if not items: return gesture.send()
+		self._v_idx = (self._v_idx - 1) % len(items)
+		self._announce(items)
+
+	def script_activate(self, gesture):
+		items = self._get_items()
+		if items and 0 <= self._v_idx < len(items):
+			target = items[self._v_idx]
+			try: target.doAction()
+			except:
+				try: target.click()
+				except: gesture.send()
+		else:
+			gesture.send()
+
+	def event_loseFocus(self):
+		self._items_cache = None
+		self._v_idx = -1
+
+	__gestures = {
+		"kb:downArrow": "next",
+		"kb:upArrow": "prev",
+		"kb:control+enter": "activate",
+	}
+
+class HeaderMenuDialog(Ia2Web):
+	_v_idx = -1
+	_items_cache = None
+
+	def _get_items(self):
+		if self._items_cache: return self._items_cache
+		root = self
+		while root and root.parent and root.role != controlTypes.Role.WINDOW:
+			if root.location and root.location.width > 300 and root.location.height > 300: break
+			root = root.parent
+		
+		items = []
+		stack = [root]
+		visited = 0
+		while stack and visited < 300:
+			o = stack.pop()
+			visited += 1
+			if o != root:
+				is_target = o.role in (controlTypes.Role.BUTTON, controlTypes.Role.LISTITEM)
+				if not is_target and o.role == controlTypes.Role.STATICTEXT and o.name and len(o.name.strip()) > 1:
+					is_target = True
+				
+				if is_target:
+					name = o.name
+					if not name:
+						from .wh_utils import collect_elements
+						sub = collect_elements(o, lambda x: x.name, max_items=10)
+						name = " ".join([s.name for s in sub if s.name])
+					if name and name.strip():
+						items.append(o)
+						continue
+
+			try:
+				child = o.lastChild
+				while child:
+					stack.append(child)
+					child = child.previous
+			except: pass
+		self._items_cache = items
+		return self._items_cache
+
+	def _announce(self, items):
+		if not items or self._v_idx < 0: return
+		obj = items[self._v_idx]
+		name = obj.name
+		if not name:
+			from .wh_utils import collect_elements
+			sub = collect_elements(obj, lambda o: o.name, max_items=20)
+			name = " ".join([s.name for s in sub if s.name])
+		
+		state_list = []
+		for s_name in ("CHECKED", "SELECTED", "PRESSED", "ON"):
+			s_val = getattr(controlTypes.State, s_name, None)
+			if s_val and s_val in obj.states:
+				state_list.append(controlTypes.stateLabels[s_val])
+		
+		full_msg = name or _("Option")
+		if state_list: full_msg += f" ({', '.join(state_list)})"
+		ui.message(full_msg)
+
+	def script_next(self, gesture):
+		items = self._get_items()
+		if not items: return gesture.send()
+		self._v_idx = (self._v_idx + 1) % len(items)
+		self._announce(items)
+
+	def script_prev(self, gesture):
+		items = self._get_items()
+		if not items: return gesture.send()
+		self._v_idx = (self._v_idx - 1) % len(items)
+		self._announce(items)
+
+	def script_activate(self, gesture):
+		items = self._get_items()
+		if items and 0 <= self._v_idx < len(items):
+			target = items[self._v_idx]
+			try: target.doAction()
+			except:
+				try: target.click()
+				except: gesture.send()
+		else:
+			gesture.send()
+
+	def event_loseFocus(self):
+		self._items_cache = None
+		self._v_idx = -1
+
+	__gestures = {
+		"kb:downArrow": "next",
+		"kb:upArrow": "prev",
+		"kb:control+enter": "activate",
+	}
 
 class AppModule(appModuleHandler.AppModule):
 	disableBrowseModeByDefault = True
@@ -45,12 +225,6 @@ class AppModule(appModuleHandler.AppModule):
 		self._is_reviewing = False
 		self._original_speak = None
 		self._patch_speech()
-		try:
-			conf = config.conf["WhatsAppEnhancer"]
-			if conf.get("automaticReadingOfNewMessages") and not ChatObserver.active:
-				ChatObserver.restore(self)
-		except:
-			pass
 
 	def event_NVDAObject_init(self, obj):
 		if obj.role == controlTypes.Role.SECTION:
@@ -88,6 +262,18 @@ class AppModule(appModuleHandler.AppModule):
 			if obj.treeInterceptor: obj.treeInterceptor.passThrough = True
 		nextHandler()
 
+	def chooseNVDAObjectOverlayClasses(self, obj, clsList):
+		cls = getattr(obj, "IA2Attributes", {}).get("class", "")
+		if "x1c4vz4f" in cls and "x1nhvcw1" in cls:
+			clsList.insert(0, CallMenuDialog)
+		if "xyi3aci" in cls and "xe2zdcy" in cls:
+			clsList.insert(0, HeaderMenuDialog)
+		if "xuwfzo9" in cls and obj.parent:
+			p = obj.parent
+			p_cls = getattr(p, "IA2Attributes", {}).get("class", "")
+			if "xyi3aci" in p_cls:
+				clsList.insert(0, HeaderMenuDialog)
+
 	def terminate(self):
 		self._unpatch_speech()
 		super().terminate()
@@ -98,7 +284,6 @@ class AppModule(appModuleHandler.AppModule):
 			speech.speech.speak = self._on_speak
 		except:
 			self._original_speak = speech.speak
-			speech.speak = self._on_speak
 
 	def _unpatch_speech(self):
 		if self._original_speak:
@@ -210,21 +395,6 @@ class AppModule(appModuleHandler.AppModule):
 			role=role_text, loc_str=loc_str, name=obj.name, auto_id=auto_id
 		))
 
-	@script(description=_("Read title"), gesture="kb:alt+t")
-	def script_read_profile_name(self, gesture):
-		from scriptHandler import getLastScriptRepeatCount
-		if getLastScriptRepeatCount() == 1:
-			state = _("enabled") if TitleObserver.toggle(self) else _("disabled")
-			ui.message(_("Chat activity tracking {state}").format(state=state))
-			return
-		el = getattr(self, "get_title_element", lambda: None)()
-		if el: ui.message(", ".join([c.name for c in el.children if c.name]))
-
-	@script(description=_("Toggle live chat"), gesture="kb:alt+l")
-	def script_toggle_live_chat(self, gesture):
-		state = _("enabled") if ChatObserver.toggle(self) else _("disabled")
-		ui.message(_("Automatic new message reading {state}").format(state=state))
-
 	@script(description=_("Dedicated text window"), gesture="kb:alt+c")
 	def script_show_text_message(self, gesture):
 		obj = api.getFocusObject()
@@ -245,10 +415,26 @@ class AppModule(appModuleHandler.AppModule):
 		if f.role == controlTypes.Role.EDITABLETEXT:
 			gesture.send()
 			return
-		p = r"(Context|konteks|contexto|contextuel|contestuale|Kontext|Bağlam|السياق|ngữ cảnh|บริบท|コンテキスト|上下文|संदर्भ|컨텍스트|Контекстное)"
-		res = find_button_by_name(f, p)
-		if not res and f.parent: res = find_button_by_name(f.parent, p)
-		if res: res[0].doAction()
+		
+		def is_context_button(obj):
+			if obj.role != controlTypes.Role.BUTTON: return False
+			cls = getattr(obj, "IA2Attributes", {}).get("class", "")
+			return "_ahkm" in cls or ("xhslqc4" in cls and "x16dsc37" in cls)
+
+		from .wh_utils import collect_elements
+		curr = f
+		for _ in range(8):
+			if not curr or curr.role == controlTypes.Role.WINDOW: break
+			if is_context_button(curr):
+				curr.doAction()
+				return
+			res = collect_elements(curr, is_context_button, max_items=100)
+			if res:
+				res[0].doAction()
+				return
+			curr = curr.parent
+		
+		gesture.send()
 
 	@script(description=_("Play voice message"), gesture="kb:enter")
 	def script_playVoiceMessage(self, gesture):
@@ -256,28 +442,55 @@ class AppModule(appModuleHandler.AppModule):
 		if f.role == controlTypes.Role.EDITABLETEXT:
 			gesture.send()
 			return
-		p = r"(Play|Putar|Reproducir|Lire|Riproduci|Reproduzir|abspielen|çal|afspelen|Odtwórz|تشغيل|Phát|เล่น|再生|播放|चलाएं|재생|Воспроизвести)"
-		res = find_button_by_name(f, p)
-		if res: res[0].doAction()
-		else: gesture.send()
+		
+		def is_voice_play_button(obj):
+			if obj.role != controlTypes.Role.BUTTON: return False
+			attrs = getattr(obj, "IA2Attributes", {})
+			cls = attrs.get("class", "")
+			return "html-button" in cls and "xdj266r" in cls and "x14z9mp" in cls
 
-	@script(description=_("Voice call"), gesture="kb:shift+alt+c")
-	def script_call(self, gesture): perform_voice_call(self)
+		if is_voice_play_button(f):
+			f.doAction()
+			return
+		
+		from .wh_utils import collect_elements
+		res = collect_elements(f, is_voice_play_button, max_items=20)
+		if not res and f.parent:
+			res = collect_elements(f.parent, is_voice_play_button, max_items=20)
+		
+		if res:
+			res[0].doAction()
+		else:
+			gesture.send()
 
-	@script(description=_("Video call"), gesture="kb:shift+alt+v")
-	def script_videoCall(self, gesture): perform_video_call(self)
+	@script(description=_("Open call menu"), gesture="kb:shift+alt+c")
+	def script_openCallMenu(self, gesture):
+		f = api.getFocusObject()
+		if f.role == controlTypes.Role.EDITABLETEXT:
+			gesture.send()
+			return
+		
+		if getattr(self, "_call_menu_btn_cache", None) and self._call_menu_btn_cache.windowHandle:
+			try:
+				self._call_menu_btn_cache.doAction()
+				return
+			except:
+				self._call_menu_btn_cache = None
 
-	@script(description=_("Next object"), gesture="kb:control+]")
-	def script_nextObject(self, gesture):
-		s = getattr(globalCommands.commands, "script_nextObject", getattr(globalCommands.commands, "script_next", None))
-		if s: s(gesture)
-		else: gesture.send()
+		def is_call_menu_button(obj):
+			if obj.role != controlTypes.Role.BUTTON: return False
+			cls = getattr(obj, "IA2Attributes", {}).get("class", "")
+			return "xjb2p0i" in cls and "xk390pu" in cls
 
-	@script(description=_("Previous object"), gesture="kb:control+[")
-	def script_previousObject(self, gesture):
-		s = getattr(globalCommands.commands, "script_previousObject", getattr(globalCommands.commands, "script_previous", None))
-		if s: s(gesture)
-		else: gesture.send()
+		from .wh_utils import collect_elements
+		root = self.mainWindow or api.getForegroundObject()
+		res = collect_elements(root, is_call_menu_button, max_items=500)
+		
+		if res:
+			self._call_menu_btn_cache = res[0]
+			res[0].doAction()
+		else:
+			gesture.send()
 
 	@script(description=_("Toggle browse mode"), gestures=["kb:NVDA+space"])
 	def script_disableBrowseModeToggle(self, gesture):

@@ -1,4 +1,3 @@
-
 import ui
 import api
 import controlTypes
@@ -99,13 +98,3 @@ def focus_composer(app_instance):
 		target = sorted(v, key=lambda x: x.location.top, reverse=True)[0]
 		app_instance._composer_cache = target
 		set_focus_and_navigator(target)
-
-def perform_voice_call(app_instance):
-	root = app_instance.mainWindow or api.getForegroundObject()
-	btns = find_button_by_name(root, r"(Voice call|Panggilan suara)")
-	if btns: btns[0].doAction()
-
-def perform_video_call(app_instance):
-	root = app_instance.mainWindow or api.getForegroundObject()
-	btns = find_button_by_name(root, r"(Video call|Panggilan video)")
-	if btns: btns[0].doAction()
