@@ -415,11 +415,15 @@ class AppModule(appModuleHandler.AppModule):
 		if f.role == controlTypes.Role.EDITABLETEXT:
 			gesture.send()
 			return
-		
+
 		def is_context_button(obj):
 			if obj.role != controlTypes.Role.BUTTON: return False
 			cls = getattr(obj, "IA2Attributes", {}).get("class", "")
 			return "_ahkm" in cls or ("xhslqc4" in cls and "x16dsc37" in cls)
+
+		if is_context_button(f):
+			f.doAction()
+			return
 
 		from .wh_utils import collect_elements
 		curr = f
@@ -443,23 +447,69 @@ class AppModule(appModuleHandler.AppModule):
 			gesture.send()
 			return
 		
+		def activate_button(obj):
+			try:
+				obj.doAction()
+				return True
+			except:
+				pass
+			try:
+				obj.click()
+				return True
+			except:
+				pass
+			try:
+				obj.setFocus()
+				gesture.send()
+				return True
+			except:
+				return False
+
 		def is_voice_play_button(obj):
 			if obj.role != controlTypes.Role.BUTTON: return False
 			attrs = getattr(obj, "IA2Attributes", {})
 			cls = attrs.get("class", "")
-			return "html-button" in cls and "xdj266r" in cls and "x14z9mp" in cls
+			tag = attrs.get("tag", "")
+			return (
+				tag == "button"
+				and "html-button" in cls
+				and "xdj266r" in cls
+				and "x14z9mp" in cls
+			)
+
+		def is_voice_message_context(obj):
+			# Fast context gate: only inspect nearby nodes if focus is inside a message item.
+			curr = obj
+			for _ in range(5):
+				if not curr:
+					break
+				cls = getattr(curr, "IA2Attributes", {}).get("class", "")
+				if "focusable-list-item" in cls:
+					return True
+				curr = curr.parent
+			return False
 
 		if is_voice_play_button(f):
-			f.doAction()
+			activate_button(f)
 			return
-		
+
+		# If focus is on another button/control, don't run expensive scans.
+		if f.role == controlTypes.Role.BUTTON and not is_voice_play_button(f):
+			gesture.send()
+			return
+		if not is_voice_message_context(f):
+			gesture.send()
+			return
+
 		from .wh_utils import collect_elements
-		res = collect_elements(f, is_voice_play_button, max_items=20)
+		res = collect_elements(f, is_voice_play_button, max_items=30)
 		if not res and f.parent:
-			res = collect_elements(f.parent, is_voice_play_button, max_items=20)
+			res = collect_elements(f.parent, is_voice_play_button, max_items=45)
+		if not res and f.parent and f.parent.parent:
+			res = collect_elements(f.parent.parent, is_voice_play_button, max_items=60)
 		
 		if res:
-			res[0].doAction()
+			activate_button(res[0])
 		else:
 			gesture.send()
 
