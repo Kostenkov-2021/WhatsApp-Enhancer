@@ -9,7 +9,8 @@ from gui.settingsDialogs import SettingsPanel, NVDASettingsDialog
 addonHandler.initTranslation()
 
 SPEC = {
-	'filter_phone_numbers': 'boolean(default=True)',
+	'filter_phone_numbers_chat': 'boolean(default=False)',
+	'filter_phone_numbers_messages': 'boolean(default=True)',
 	'read_usage_hints': 'boolean(default=True)',
 	'disable_browse_mode_lock': 'boolean(default=False)',
 }
@@ -20,8 +21,10 @@ class WhatsAppEnhancerSettings(SettingsPanel):
 	def makeSettings(self, settingsSizer):
 		s = gui.guiHelper.BoxSizerHelper(self, sizer=settingsSizer)
 		c = config.conf["WhatsAppEnhancer"]
-		self.filter_phone_numbers = s.addItem(wx.CheckBox(self, label=_("Filter phone numbers in chat headers")))
-		self.filter_phone_numbers.SetValue(bool(c.get("filter_phone_numbers", True)))
+		self.filter_phone_numbers_chat = s.addItem(wx.CheckBox(self, label=_("Filter phone numbers in chat list")))
+		self.filter_phone_numbers_chat.SetValue(bool(c.get("filter_phone_numbers_chat", False)))
+		self.filter_phone_numbers_messages = s.addItem(wx.CheckBox(self, label=_("Filter phone numbers in message list")))
+		self.filter_phone_numbers_messages.SetValue(bool(c.get("filter_phone_numbers_messages", True)))
 		self.read_usage_hints = s.addItem(wx.CheckBox(self, label=_("Read usage hints while navigating chat list")))
 		self.read_usage_hints.SetValue(bool(c.get("read_usage_hints", True)))
 		self.disable_browse_mode_lock = s.addItem(wx.CheckBox(self, label=_("Disable browse mode lock (not recommended)")))
@@ -29,7 +32,8 @@ class WhatsAppEnhancerSettings(SettingsPanel):
 
 	def onSave(self):
 		c = config.conf["WhatsAppEnhancer"]
-		c["filter_phone_numbers"] = self.filter_phone_numbers.IsChecked()
+		c["filter_phone_numbers_chat"] = self.filter_phone_numbers_chat.IsChecked()
+		c["filter_phone_numbers_messages"] = self.filter_phone_numbers_messages.IsChecked()
 		c["read_usage_hints"] = self.read_usage_hints.IsChecked()
 		c["disable_browse_mode_lock"] = self.disable_browse_mode_lock.IsChecked()
 		config.conf.save()
