@@ -13,8 +13,16 @@ import tones
 import globalCommands
 import addonHandler
 import winUser
+import wx
 
 addonHandler.initTranslation()
+
+_PHONE_RE = re.compile(r'\+\d[()\d\s\u202c-]{11,}')
+_CONFIG_SECTION = "WhatsAppEnhancer"
+_CONFIG_SPEC = {
+	"filterChatListPhones": "boolean(default=False)",
+	"filterMessageListPhones": "boolean(default=True)",
+}
 
 sys.path.insert(0, ".")
 from .text_window import TextWindow
@@ -210,11 +218,141 @@ class AppModule(appModuleHandler.AppModule):
 	disableBrowseModeByDefault = True
 	mainWindow = None
 	scriptCategory = _("WhatsApp Enhancer")
-	
+
 	_message_list_cache = None
 	_composer_cache = None
 	_chats_cache = None
 	_title_element_cache = None
+	_TIMESTAMP_RE = re.compile(r'^\d{1,2}[:.]\d{2}(\s*[AaPp][Mm])?$')
+	_HINT_RE = re.compile(
+		r"(For more options|Untuk opsi|Para m|Pour plus|Per lebih|F\u00fcr weitere|"
+		r"Para mais|Daha fazla|Voor meer|Untuk mengakses|Untuk selengkapnya|"
+		r"\u0414\u043b\u044f \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f|"
+		r"\u0110\u1ec3 bi\u1ebft th\u00eam|\u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a|"
+		r"\u305d\u306e\u4ed6|\u66f4\u591a|\ucd94 \uac00)",
+		re.I
+	)
+
+
+	def _is_ts(self, text):
+		return bool(self._TIMESTAMP_RE.match(text.strip()))
+
+	def _collect_leaf_texts(self, obj, depth=0):
+		if depth > 8:
+			return []
+		results = []
+		try:
+			role = obj.role
+			children = getattr(obj, "children", []) or []
+			if role in (controlTypes.Role.STATICTEXT, controlTypes.Role.PANE):
+				name = (getattr(obj, "name", "") or "").strip()
+				if name and not children:
+					results.append(name)
+					return results
+			for child in children:
+				results.extend(self._collect_leaf_texts(child, depth + 1))
+		except Exception:
+			pass
+		return results
+
+	def _extract_message_body(self, obj):
+		full_name = (getattr(obj, "name", "") or "").strip()
+		leaves = self._collect_leaf_texts(obj)
+		if leaves:
+			filtered = [t for t in leaves if not self._is_ts(t) and not self._HINT_RE.search(t)]
+			if filtered:
+				if len(filtered) > 1 and (len(filtered[0]) < 40
+					and full_name.startswith(filtered[0])
+					and len(filtered[0]) < len(full_name) - 5):
+					filtered = filtered[1:]
+			if filtered:
+				result = "\r\n".join(filtered)
+				result = self._HINT_RE.sub("", result).strip()
+				return result or None
+		if not full_name:
+			return None
+		cleaned = self._HINT_RE.sub("", full_name).strip()
+		cleaned = re.sub(r"\s*\d{1,2}[:.]\d{2}(\s*[AaPp][Mm])?\s*$", "", cleaned).strip()
+		leaf_names = self._collect_leaf_texts(obj)
+		sender = next(
+			(t for t in leaf_names
+			 if t and len(t) < 40 and cleaned.startswith(t) and len(t) < len(cleaned) - 5),
+			None
+		)
+		if sender is None:
+			words = cleaned.split()
+			if words:
+				first = words[0]
+				remainder = cleaned[len(first):].lstrip(" :")
+				if (len(first) < 30
+						and " " not in first
+						and re.match(r'^[A-Za-z\u00C0-\u024F]+$', first)
+						and len(remainder) > 40):
+					sender = first
+
+		if sender:
+			cleaned = cleaned[len(sender):].lstrip(" :")
+		return cleaned.strip() or None
+
+	def _get_full_message_text(self, obj):
+		return self._extract_message_body(obj)
+
+	def _scan_buttons(self, obj):
+		result = []
+		if obj.role == controlTypes.Role.BUTTON:
+			result.append(obj)
+		for child in getattr(obj, "children", []) or []:
+			result.extend(self._scan_buttons(child))
+		return result
+
+	def _locate_collapsed(self, obj):
+		try:
+			if obj.role == controlTypes.Role.BUTTON:
+				if 512 in getattr(obj, "states", set()):
+					return obj
+			for child in getattr(obj, "children", []) or []:
+				found = self._locate_collapsed(child)
+				if found:
+					return found
+		except Exception:
+			pass
+		return None
+
+	def _gather_buttons_until(self, obj, stop_obj):
+		if obj is stop_obj:
+			return [], True
+		btns = []
+		if obj.role == controlTypes.Role.BUTTON:
+			btns.append(obj)
+		for child in getattr(obj, "children", []) or []:
+			child_btns, found = self._gather_buttons_until(child, stop_obj)
+			btns.extend(child_btns)
+			if found:
+				return btns, True
+		return btns, False
+
+	def _collect_message_texts(self, obj, min_len=15, depth=0):
+		if depth > 9:
+			return []
+		texts = []
+		try:
+			role = obj.role
+			children = getattr(obj, "children", []) or []
+			if role in (controlTypes.Role.STATICTEXT, controlTypes.Role.PANE):
+				name = (getattr(obj, "name", "") or "").strip()
+				if name and len(name) >= min_len and not self._TIMESTAMP_RE.match(name):
+					if not children:
+						texts.append(name)
+			val = (getattr(obj, "value", "") or "").strip()
+			if val and len(val) >= min_len and not self._TIMESTAMP_RE.match(val):
+				texts.append(val)
+			for child in children:
+				texts.extend(self._collect_message_texts(child, min_len, depth + 1))
+		except Exception:
+			pass
+		return texts
+
+
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -224,7 +362,66 @@ class AppModule(appModuleHandler.AppModule):
 		self._review_line_index = 0
 		self._is_reviewing = False
 		self._original_speak = None
+		self._phone_cache = {}
+		self._init_phone_config()
 		self._patch_speech()
+
+	def _init_phone_config(self):
+		try:
+			if _CONFIG_SECTION not in config.conf:
+				config.conf[_CONFIG_SECTION] = {}
+			for key, spec in _CONFIG_SPEC.items():
+				if key not in config.conf[_CONFIG_SECTION]:
+					default = "True" if "default=True" in spec else "False"
+					config.conf[_CONFIG_SECTION][key] = default
+			self._phone_cache = {
+				"filterChatListPhones": self._read_bool("filterChatListPhones", False),
+				"filterMessageListPhones": self._read_bool("filterMessageListPhones", True),
+			}
+		except Exception:
+			self._phone_cache = {"filterChatListPhones": False, "filterMessageListPhones": True}
+
+	def _read_bool(self, key, default):
+		try:
+			val = config.conf[_CONFIG_SECTION].get(key, default)
+			if isinstance(val, bool):
+				return val
+			return str(val).lower() not in ("false", "0", "")
+		except Exception:
+			return default
+
+	def _has_message_list_ancestor(self, obj):
+		current = obj
+		for _ in range(7):
+			try:
+				cls = getattr(current, "IA2Attributes", {}).get("class", "")
+				if "focusable-list-item" in cls:
+					return True
+				current = current.parent
+				if current is None:
+					return False
+			except Exception:
+				break
+		return False
+
+	def _is_chat_list_item(self, obj):
+		try:
+			parent = obj.parent
+			if parent is None:
+				return False
+			if parent.role == controlTypes.Role.LIST:
+				loc = parent.location
+				if loc and loc.left < 450 and loc.width < 500:
+					return True
+			if parent.role == controlTypes.Role.LISTITEM:
+				gp = parent.parent
+				if gp and gp.role == controlTypes.Role.LIST:
+					loc = gp.location
+					if loc and loc.left < 450 and loc.width < 500:
+						return True
+		except Exception:
+			pass
+		return False
 
 	def event_NVDAObject_init(self, obj):
 		if obj.role == controlTypes.Role.SECTION:
@@ -245,10 +442,31 @@ class AppModule(appModuleHandler.AppModule):
 			if obj.name and re.search(r'^(Chats|Chat|Daftar chat)$', obj.name, re.I):
 				try: self._chats_cache = obj.parent.parent.next.firstChild
 				except: pass
-			if obj.name and config.conf.get("WhatsAppEnhancer", {}).get("filter_phone_numbers", True):
-				obj.name = re.sub(r'\+\d[()\d\s\u202c-]{12,}', '', obj.name)
-		except:
+			if obj.name:
+				self._apply_phone_filter(obj)
+		except Exception:
 			pass
+
+	def _apply_phone_filter(self, obj):
+		name = obj.name
+		if not name or len(name) < 10:
+			return
+		if '+' not in name:
+			return
+		in_message_list = self._has_message_list_ancestor(obj)
+		if in_message_list:
+			if self._phone_cache.get("filterMessageListPhones", True):
+				filtered = _PHONE_RE.sub('', name)
+				if filtered != name:
+					obj.name = re.sub(r'\s{2,}', ' ', filtered).strip()
+		else:
+			if self._is_chat_list_item(obj):
+				if self._phone_cache.get("filterChatListPhones", False):
+					filtered = _PHONE_RE.sub('', name)
+					if filtered != name:
+						obj.name = re.sub(r'\s{2,}', ' ', filtered).strip()
+
+
 
 	def event_gainFocus(self, obj, nextHandler):
 		if not self.mainWindow or not self.mainWindow.windowHandle:
@@ -315,10 +533,8 @@ class AppModule(appModuleHandler.AppModule):
 		try:
 			if self._review_cursor > 0:
 				self._review_cursor -= 1
-			
 			if self._review_cursor >= len(self._last_spoken_text):
 				self._review_cursor = len(self._last_spoken_text) - 1
-				
 			speech.speak([self._last_spoken_text[self._review_cursor]])
 		finally: self._is_reviewing = False
 
@@ -395,19 +611,87 @@ class AppModule(appModuleHandler.AppModule):
 			role=role_text, loc_str=loc_str, name=obj.name, auto_id=auto_id
 		))
 
-	@script(description=_("Dedicated text window"), gesture="kb:alt+c")
+	@script(description=_("Show / read complete message"), gesture="kb:alt+c")
 	def script_show_text_message(self, gesture):
 		obj = api.getFocusObject()
-		if obj.name: TextWindow(obj.name.strip(), _("Message Text"), readOnly=False)
-		else: gesture.send()
+		if not self._has_message_list_ancestor(obj):
+			gesture.send()
+			return
+		focus_name = (getattr(obj, "name", "") or "")
+		if "…" not in focus_name:
+			text = self._get_full_message_text(obj)
+			if text:
+				TextWindow(text, _("Message Text"), readOnly=False)
+			else:
+				gesture.send()
+			return
+		parent = getattr(obj, "parent", None)
+		if not parent:
+			text = self._get_full_message_text(obj)
+			if text:
+				TextWindow(text, _("Message Text"), readOnly=False)
+			else:
+				gesture.send()
+			return
+		siblings = getattr(parent, "children", []) or []
+		all_parts = []
+		for sib in siblings:
+			all_parts.extend(self._collect_message_texts(sib))
+		existing = " ".join(all_parts)
+		if not existing:
+			existing = focus_name
+		if len(existing) > 800:
+			TextWindow(existing, _("Message Text"), readOnly=False)
+			return
+		for sib in siblings:
+			collapsed_btn = self._locate_collapsed(sib)
+			if not collapsed_btn:
+				continue
+			all_buttons, _found = self._gather_buttons_until(sib, collapsed_btn)
+			focusable = [b for b in all_buttons if 16777216 in getattr(b, "states", set())]
+			if len(focusable) >= 2:
+				read_more = focusable[1]
+			elif len(focusable) == 1:
+				read_more = focusable[0]
+			else:
+				continue
+			read_more.doAction()
+			msg_parent = parent
+			def _show_expanded(p=msg_parent):
+				try:
+					speech.cancelSpeech()
+				except Exception:
+					pass
+				parts = []
+				try:
+					for s in getattr(p, "children", []) or []:
+						parts.extend(self._collect_message_texts(s))
+				except Exception:
+					pass
+				full = "\r\n".join(parts) if parts else focus_name
+				if full:
+					TextWindow(full, _("Message Text"), readOnly=False)
+				else:
+					ui.message(_("Text not found"))
+			wx.CallLater(150, _show_expanded)
+			return
+		TextWindow(existing or focus_name, _("Message Text"), readOnly=False)
 
 	@script(description=_("Copy message"), gesture="kb:control+c")
 	def script_copyMessage(self, gesture):
 		obj = api.getFocusObject()
-		if obj.role == controlTypes.Role.LISTITEM and obj.name:
-			api.copyToClip(obj.name.strip())
+		if obj.role == controlTypes.Role.EDITABLETEXT:
+			gesture.send()
+			return
+		if not self._has_message_list_ancestor(obj):
+			gesture.send()
+			return
+		text = self._extract_message_body(obj)
+		if text:
+			api.copyToClip(text)
 			ui.message(_("Copied"))
-		else: gesture.send()
+		else:
+			gesture.send()
 
 	@script(description=_("Context menu"), gesture="kb:shift+enter")
 	def script_contextMenu(self, gesture):
@@ -478,7 +762,6 @@ class AppModule(appModuleHandler.AppModule):
 			)
 
 		def is_voice_message_context(obj):
-			# Fast context gate: only inspect nearby nodes if focus is inside a message item.
 			curr = obj
 			for _ in range(5):
 				if not curr:
@@ -493,10 +776,6 @@ class AppModule(appModuleHandler.AppModule):
 			activate_button(f)
 			return
 
-		# If focus is on another button/control, don't run expensive scans.
-		if f.role == controlTypes.Role.BUTTON and not is_voice_play_button(f):
-			gesture.send()
-			return
 		if not is_voice_message_context(f):
 			gesture.send()
 			return
@@ -558,3 +837,31 @@ class AppModule(appModuleHandler.AppModule):
 			ti.passThrough = True
 			ui.message(_("Browse Mode is disabled for WhatsApp"))
 		else: gesture.send()
+
+	@script(description=_("Toggle phone number filtering in chat list"))
+	def script_toggleChatListPhones(self, gesture):
+		try:
+			new_val = not self._phone_cache.get("filterChatListPhones", False)
+			config.conf[_CONFIG_SECTION]["filterChatListPhones"] = new_val
+			config.conf.save()
+			self._phone_cache["filterChatListPhones"] = new_val
+			if new_val:
+				ui.message(_("Chat list: phone numbers hidden"))
+			else:
+				ui.message(_("Chat list: phone numbers visible"))
+		except Exception:
+			pass
+
+	@script(description=_("Toggle phone number filtering in message list"))
+	def script_toggleMessageListPhones(self, gesture):
+		try:
+			new_val = not self._phone_cache.get("filterMessageListPhones", True)
+			config.conf[_CONFIG_SECTION]["filterMessageListPhones"] = new_val
+			config.conf.save()
+			self._phone_cache["filterMessageListPhones"] = new_val
+			if new_val:
+				ui.message(_("Message list: phone numbers hidden"))
+			else:
+				ui.message(_("Message list: phone numbers visible"))
+		except Exception:
+			pass
